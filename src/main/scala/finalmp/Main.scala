@@ -8,10 +8,4 @@ object Main extends IOApp {
     val httpServer = new HttpServer[IO]()
     httpServer.start().as(ExitCode.Success)
   }
-    // args.headOption match {
-    //   case Some(name) =>
-    //     IO(println(s"Hello, $name.")).as(ExitCode.Success)
-    //   case None =>
-    //     IO(System.err.println("Usage: MyApp name")).as(ExitCode(2))
-    // }
 }
