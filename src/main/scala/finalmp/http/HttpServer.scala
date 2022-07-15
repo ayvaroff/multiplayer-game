@@ -8,9 +8,12 @@ import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
 
 import scala.concurrent.ExecutionContext
+import finalmp.controllers.PlayerController
 
-class HttpServer[F[_]: ConcurrentEffect: Timer] {
-  private val httpApp: HttpRoutes[F] = Router("/api" -> new PlayerRoutes().routes)
+class HttpServer[F[_]: ConcurrentEffect: Timer](
+  playerController: PlayerController
+) {
+  private val httpApp: HttpRoutes[F] = Router("/api" -> new PlayerRoutes(playerController).routes)
 
   def start(): F[Unit] =
     BlazeServerBuilder[F](ExecutionContext.global)
