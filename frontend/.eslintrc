@@ -1,0 +1,151 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "simple-import-sort",
+    "import"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "complexity": "off",
+    "no-restricted-syntax": [2, "LabeledStatement", "WithStatement"],
+    "no-console": "error",
+    "no-debugger": "error",
+    "no-alert": "error",
+
+    // force prettier to use double quotes
+    "prettier/prettier": ["error", {
+      "singleQuote": false,
+      "quoteProps": "consistent",
+      "parser": "typescript"
+    }],
+
+    // import sort rules
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^d3", "^@?\\w"],
+          ["^\\u0000"],
+          // absolute imports of the application
+          ["^(ecs|game-core|game-systems|game-components|models)(/.*|$)"],
+          ["^\\."]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    /*
+     * TODO: enable this rule when it works 🤦🏽‍♂️
+     * 1 - https://github.com/import-js/eslint-plugin-import/issues/2348
+     * 2 - https://github.com/import-js/eslint-plugin-import/issues/2344
+     * 3 - https://github.com/import-js/eslint-plugin-import/issues/2004
+     */
+    // "import/no-cycle": ["error", { "maxDepth": 5 }],
+    // do not allow relative imports for the next paths
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        "**/../ecs/*",
+        "**/../game-components/*",
+        "**/../game-core/*",
+        "**/../game-systems/*",
+        "**/../models/*"
+      ]
+    }],
+
+    "semi": "error",
+    "comma-dangle": ["error", "always-multiline"],
+    "guard-for-in": "error",
+    "no-irregular-whitespace": ["error", { "skipStrings": false }],
+    "no-var": "error",
+    "no-trailing-spaces": "error",
+    "no-multi-spaces": "error",
+    "space-infix-ops": "error",
+    "eol-last": "error",
+    "object-curly-spacing": ["error", "always"],
+    "comma-spacing": ["error"],
+    "eqeqeq": ["error", "always"],
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "max-len": [
+      "warn",
+      {
+        "code": 120,
+        "comments": 0
+      }
+    ],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxBOF": 0 }],
+    "quotes": [
+      "error",
+      "double",
+      { "allowTemplateLiterals": true, "avoidEscape": true }
+    ],
+    // handled by TS
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    // handled by TS, here "variables" means arrow functions
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "variables": false }],
+    "@typescript-eslint/explicit-module-boundary-types": ["error"],
+    // see how it can be improved
+    // 1 - https://github.com/typescript-eslint/typescript-eslint/issues/3950
+    // 2 - https://github.com/typescript-eslint/typescript-eslint/issues/4338
+    // "@typescript-eslint/consistent-type-imports": ["error"],
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      { "allowTernary": true }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "extendDefaults": true,
+        "types": {
+          "Function": false,
+          "{}": false
+        }
+      }
+    ],
+    "@typescript-eslint/member-ordering": [
+      "error",
+      {
+        "classes": [
+          "decorated-field",
+          "public-field",
+          "protected-field",
+          "private-field",
+          "constructor",
+          "public-static-method",
+          "public-decorated-method",
+          "public-method",
+          "protected-static-method",
+          "protected-decorated-method",
+          "protected-method",
+          "private-static-method",
+          "private-decorated-method",
+          "private-method"
+        ]
+      }
+    ]
+  }
+}
