@@ -1,0 +1,9 @@
+// @see https://stackoverflow.com/questions/57044697/how-to-use-different-tsconfig-file-for-test-files-in-vscode
+{
+    "extends": "./tsconfig.base.json",
+    "include": [
+        "src/**/*",
+        "src/**/*.spec.*"
+    ],
+    "exclude": ["node_modules"]
+}

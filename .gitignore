@@ -1,15 +1,24 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Frontend
+node_modules
+coverage
+lib
+dist
+
+# Backend
 *.class
 *.log
-
-.idea/
-
 .bloop
 .history
 .metals
-.vscode
 .bsp
 metals.sbt
 
-target/
-
+# Misc
+.idea
 .DS_Store
+.env
+.npmrc
+target/
+backend/.vscode

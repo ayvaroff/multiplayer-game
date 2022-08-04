@@ -1,4 +1,4 @@
-name := "bootcamp-final-backend"
+name := "multiplayer-backend"
 
 version := "1.0"
 
