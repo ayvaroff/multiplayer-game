@@ -1,5 +1,5 @@
 package finalmp.models
 
-import cats.data.NonEmptyList
+import cats.data.NonEmptyMap
 
-final case class Room(id: String, players: NonEmptyList[Player])
+final case class Room(id: String, players: NonEmptyMap[PlayerId, Player])

@@ -20,7 +20,7 @@ export class CanvasManger {
 
     container.appendChild(this.canvas);
 
-    const ctx = this.canvas.getContext("2d");
+    const ctx = this.canvas.getContext("2d", { alpha: false });
 
     if (!ctx) {
       throw new Error("Canvas could not be initialized");

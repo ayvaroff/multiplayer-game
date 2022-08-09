@@ -40,6 +40,7 @@ export class InputsController extends ECS.System {
   }
 
   public update(entities: Set<ECS.Entity>, tick: number): void {
+    // Frame independent movement
     // in order to make movement speed constant in every device
     // and avoid locking to FPS which may vary
     if (tick - this.lastTick < 30) {
@@ -73,11 +74,13 @@ export class InputsController extends ECS.System {
   private processEntityMovement(entity: ECS.Entity) {
     const playerController = entity.getComponent(GameComponents.PlayerController);
 
+    // TODO: change to rotation speed
     // rotate left
     if (this.moveTo.left) {
       entity.getComponent(GameComponents.Position).rotation -= 1 * playerController.params.rotationSpeed;
     }
 
+    // TODO: change to rotation speed
     // rotate right
     if (this.moveTo.right) {
       entity.getComponent(GameComponents.Position).rotation += 1 * playerController.params.rotationSpeed;
