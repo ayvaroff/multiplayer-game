@@ -29,7 +29,6 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
       initialGameState <- initialGameStateRef.get
       gameTopic <- Topic[F, TestClasses.GameState](initial = initialGameState)
       lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
-      // _ <- lobbyController.lobbyStreams(initialGameStateRef).compile.drain
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(9002, "localhost")
         .withHttpApp(httpApp(gameQueue, gameTopic).orNotFound)

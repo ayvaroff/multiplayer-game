@@ -2,16 +2,16 @@ package finalmp.controllers
 
 import fs2.Stream
 import fs2.concurrent.{Topic, Queue}
-import java.util.UUID
-import scala.util.Random
 import cats.effect.concurrent.Ref
 import cats.effect.{Sync, ConcurrentEffect, Timer}
 import finalmp.models._
+import finalmp.models.events.decoder.GameEventDec._
+import finalmp.models.events.GameEvent
 import org.http4s.websocket.WebSocketFrame
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
-import fs2.Pipe
-import io.circe.Json
+import io.circe.parser._
+import cats.effect.internals.IORunLoop
 
 object TestClasses {
   sealed trait GameEvent
@@ -41,8 +41,18 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
       .dequeue
       .evalMap {
         case WebSocketFrame.Text(message, _) => {
-          // val parsedValue: Json = Json.parse(message).getOrElse().hcursor
-          refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
+          val decodedMessage = decode[GameEvent](message.trim)
+
+          val taskA = refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
+          val taskB = decodedMessage match {
+            case Right(GameEvent.PlayerConnect(_)) => gameTopic.publish1(TestClasses.GameState(TestClasses.PlayerMove("Connected")))
+            case Right(GameEvent.PlayerDisconnect(_)) => println("player disconnected")
+            case Right(GameEvent.PlayerUpdate(_)) => println("player updated")
+            case _ => println("something is wrong")
+          }
+          
+          val tasks = taskA *> taskB
+          tasks[F].unsafeRunSync()
         }
         case _ => refGameState.set(TestClasses.GameState(TestClasses.PlayerMove("unknown")))
       }

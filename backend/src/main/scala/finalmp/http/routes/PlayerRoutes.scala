@@ -44,28 +44,8 @@ class PlayerRoutes[F[_]: Sync](
       WebSocketBuilder[F].build(
         // Sink, where the incoming WebSocket messages from the client are pushed to.
         receive = gameQueue.enqueue,
-        // .compose[Stream[F, WebSocketFrame]](
-        //   _.collect {
-        //     case WebSocketFrame.Text(message, _) => message.trim
-        //   }
-          // .evalMap {
-          //   case "test" => "another one"
-          // }
-          // .merge(Stream.awakeEvery(FiniteDuration(2, TimeUnit.SECONDS)))
-          // .map(WebSocketFrame.Text(_))
-        // ),
         // Outgoing stream of WebSocket messages to send to the client.
-        send = gameTopic.subscribe(10).map(as => WebSocketFrame.Text(as.toString())), //.through(echoPipe),
+        send = gameTopic.subscribe(10).map(as => WebSocketFrame.Text(as.toString())),
       )
   }
-
-  // def echoPipe(): Pipe[F, WebSocketFrame, WebSocketFrame] =
-  //       _.collect {
-  //         case WebSocketFrame.Text(message, _) => message.trim
-  //       }
-  //       .evalMap {
-  //         case "time" => "send another"
-  //         case text   => text
-  //       }
-  //       .map(WebSocketFrame.Text(_))
 }

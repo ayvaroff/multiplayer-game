@@ -9,7 +9,7 @@ interface ServerMessage {
   data: Record<string, unknown>;
 }
 interface GameMessage {
-  type: "playerUpdate";
+  type: "player.connect" | "player.disconnect" | "player.update";
   data: Record<string, unknown>;
 }
 
@@ -50,8 +50,8 @@ export class WSConnection extends ECS.System {
     }
     this.lastTick = tick;
 
-    // don't do anything if WS is closed
-    if (this.websocket.readyState === WebSocket.CLOSED) {
+    // don't do anything if WS is closed or not connected yet
+    if (this.websocket.readyState !== WebSocket.OPEN) {
       return;
     }
 
@@ -63,7 +63,7 @@ export class WSConnection extends ECS.System {
 
         this.websocket.send(
           JSON.stringify({
-            type: "playerUpdate",
+            type: "player.connect",
             data: {
               playerId: entity.id,
               location: playerPosition,
