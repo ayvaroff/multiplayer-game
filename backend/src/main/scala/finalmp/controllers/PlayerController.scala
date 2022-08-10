@@ -17,7 +17,7 @@ final case class PlayerController() {
   
     players += (newPlayer.id -> newPlayer)
 
-    printf(players.map(pair => pair._1+"="+pair._2).mkString("?","&",""))
+    println(players.map(pair => pair._1+"="+pair._2).mkString("?","&",""))
 
     newPlayer
   }

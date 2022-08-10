@@ -13,6 +13,8 @@ export class CanvasManger {
     const dpr = window.devicePixelRatio;
     this.canvas = document.createElement("canvas");
 
+    // TODO: make it 1280x720
+
     this.canvas.width = width * dpr;
     this.canvas.height = height * dpr;
     this.canvas.style.width = width + "px";
