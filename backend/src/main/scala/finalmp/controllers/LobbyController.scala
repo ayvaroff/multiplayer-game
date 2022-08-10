@@ -11,7 +11,6 @@ import org.http4s.websocket.WebSocketFrame
 import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 import io.circe.parser._
-import cats.effect.internals.IORunLoop
 
 object TestClasses {
   sealed trait GameEvent
@@ -42,17 +41,18 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
       .evalMap {
         case WebSocketFrame.Text(message, _) => {
           val decodedMessage = decode[GameEvent](message.trim)
+          
+          val taskA: F[Unit] = refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
 
-          val taskA = refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
-          val taskB = decodedMessage match {
+          // TODO: make it work (publish to topic)
+          val taskB: F[Unit] = decodedMessage match {
             case Right(GameEvent.PlayerConnect(_)) => gameTopic.publish1(TestClasses.GameState(TestClasses.PlayerMove("Connected")))
-            case Right(GameEvent.PlayerDisconnect(_)) => println("player disconnected")
-            case Right(GameEvent.PlayerUpdate(_)) => println("player updated")
-            case _ => println("something is wrong")
+            case Right(GameEvent.PlayerDisconnect(_)) => gameTopic.publish1(TestClasses.GameState(TestClasses.PlayerMove("DisConnected")))
+            case Right(GameEvent.PlayerUpdate(_)) => gameTopic.publish1(TestClasses.GameState(TestClasses.PlayerMove("Updated")))
+            case _ => Sync[F].delay(println("something is wrong"))
           }
           
-          val tasks = taskA *> taskB
-          tasks[F].unsafeRunSync()
+          taskA
         }
         case _ => refGameState.set(TestClasses.GameState(TestClasses.PlayerMove("unknown")))
       }
