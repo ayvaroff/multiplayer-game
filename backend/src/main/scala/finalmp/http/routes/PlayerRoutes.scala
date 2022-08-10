@@ -1,5 +1,8 @@
 package finalmp.http.routes
 
+import finalmp.controllers.{PlayerController, TestClasses}
+import finalmp.models.game.{Player, PlayerId}
+import finalmp.models.game.codecs.JsonCodecs._
 import cats.effect._
 import cats.syntax.all._
 import io.circe.parser._
@@ -8,14 +11,9 @@ import io.circe.generic.auto._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.circe.CirceEntityCodec._
-import fs2.{Stream, Pipe}
 import fs2.concurrent.{Topic, Queue}
 import org.http4s.server.websocket.WebSocketBuilder
 import org.http4s.websocket.WebSocketFrame
-import scala.concurrent.duration._
-import java.util.concurrent.TimeUnit
-import finalmp.controllers.{PlayerController, TestClasses}
-import finalmp.models.{Player, PlayerId}
 
 class PlayerRoutes[F[_]: Sync](
   controller: PlayerController,
@@ -27,14 +25,11 @@ class PlayerRoutes[F[_]: Sync](
       Ok(s"Hello, $name!")
 
     case req @ POST -> Root / "connect" => {
-      // roomManager.connect()
-      // Ok(controller.addPlayer(skin: SkinType).asJson.noSpaces)
-      Ok(controller.addPlayer().asJson.noSpaces)
+      Ok(controller.createPlayer().asJson.noSpaces)
     }
 
     case req @ POST -> Root / "disconnect" => {
       req.as[PlayerId].flatMap { playerId =>
-        controller.removePlayer(playerId)
         Ok("Ok")
       }
     }
