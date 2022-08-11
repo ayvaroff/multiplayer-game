@@ -26,7 +26,7 @@ final case class PlayerController() {
 
     Player(
       id = PlayerId(playerId),
-      name = PlayerName(s"Player_${playerId}"),
+      name = PlayerName(s"Player_$playerId"),
       // randomize player position data
       // TODO: get values according to game world state
       position = Position(Random.between(10.0, 110.0), Random.between(0.0, 100.0), Random.nextInt(360)),
