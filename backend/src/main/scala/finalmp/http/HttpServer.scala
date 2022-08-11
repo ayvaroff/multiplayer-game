@@ -1,17 +1,17 @@
 package finalmp.http
 
+import finalmp.controllers.{PlayerController, LobbyController, TestClasses}
+import finalmp.http.services.{PlayerService, GameService, ApiService}
 import cats.effect._
 import cats.syntax.all._
-import fs2.concurrent.{Topic, Queue}
+import cats.effect.concurrent.Ref
 import org.http4s._
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.Router
-import cats.effect.concurrent.Ref
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.websocket.WebSocketFrame
+import fs2.concurrent.{Topic, Queue}
 import scala.concurrent.ExecutionContext
-import finalmp.http.routes.PlayerRoutes
-import finalmp.controllers.{PlayerController, LobbyController, TestClasses}
 
 class HttpServer[F[_]: ConcurrentEffect: Timer](
   playerController: PlayerController,
@@ -20,7 +20,11 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
   private def httpApp(
     gameQueue: Queue[F, WebSocketFrame],
     gameTopic: Topic[F, TestClasses.GameState]
-  ): HttpRoutes[F] = Router("/api" -> new PlayerRoutes(playerController, gameQueue, gameTopic).routes)
+  ): HttpRoutes[F] = Router(
+    "/api" -> new ApiService(playerController).routes,
+    "/player" -> new PlayerService(playerController).routes,
+    "/game" -> new GameService(gameQueue, gameTopic).routes,
+  )
 
   def start(): F[Unit] =
     for {

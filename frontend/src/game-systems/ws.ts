@@ -23,7 +23,7 @@ export class WSConnection extends ECS.System {
   constructor() {
     super();
 
-    this.websocket = new WebSocket(config.wsServerHost + "/api/game");
+    this.websocket = new WebSocket(config.wsServerHost + "/game/run");
 
     this.websocket.onerror = () => {
       // TODO: handle it properly

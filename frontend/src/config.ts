@@ -1,8 +1,8 @@
 export const config = {
   serverHost: "http://localhost:9002",
   wsServerHost: "ws://localhost:9002",
-  gameConnectPath: "/api/connect",
-  websocketPath: "/api/ws",
+  gameConnectPath: "/player/connect",
+  websocketPath: "/game/run",
 };
 
 // TODO: better naming
