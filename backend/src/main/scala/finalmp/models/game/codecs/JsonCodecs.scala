@@ -1,7 +1,8 @@
 package finalmp.models.game.codecs
 
 import finalmp.models.game._
-import io.circe.generic.semiauto._
+import io.circe.generic.semiauto.{deriveEncoder, deriveDecoder}
+import io.circe.generic.extras.semiauto.{deriveUnwrappedDecoder, deriveUnwrappedEncoder}
 import io.circe.{Encoder, Decoder, KeyEncoder, KeyDecoder}
 
 object JsonCodecs {
@@ -14,8 +15,8 @@ object JsonCodecs {
   // TODO: fix ADT unnecessary values asJson
   implicit val encoderPlayer: Encoder[Player] = deriveEncoder[Player]
   implicit val decoderPlayer: Decoder[Player] = deriveDecoder[Player]
-  implicit val encoderPlayerId: Encoder[PlayerId] = deriveEncoder[PlayerId]
-  implicit val decoderPlayerId: Decoder[PlayerId] = deriveDecoder[PlayerId]
+  implicit val encoderPlayerId: Encoder[PlayerId] = deriveUnwrappedEncoder[PlayerId]
+  implicit val decoderPlayerId: Decoder[PlayerId] = deriveUnwrappedDecoder[PlayerId]
   implicit val encoderPlayerName: Encoder[PlayerName] = deriveEncoder[PlayerName]
   implicit val decoderPlayerName: Decoder[PlayerName] = deriveDecoder[PlayerName]
   implicit val encoderPlayerWeaponId: Encoder[PlayerWeaponId] = deriveEncoder[PlayerWeaponId]

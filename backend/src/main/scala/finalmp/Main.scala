@@ -5,10 +5,11 @@ import finalmp.http.HttpServer
 import finalmp.controllers.PlayerController
 
 object Main extends IOApp {
-  def run(args: List[String]): IO[ExitCode] = {
-    val playerController = new PlayerController()
-    val httpServer = new HttpServer[IO](playerController)
-
-    httpServer.start().as(ExitCode.Success)
-  }
+  def run(args: List[String]): IO[ExitCode] =
+    for {
+      _ <- IO(println("Starting server..."))
+      playerController = new PlayerController()
+      httpServer = new HttpServer[IO](playerController)
+      _ <- httpServer.start()
+    } yield ExitCode.Success
 }
