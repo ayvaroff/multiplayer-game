@@ -6,6 +6,7 @@ export class Render extends ECS.System {
   public requiredComponents: Set<Function> = new Set([
     GameComponents.Sprite,
     GameComponents.Position,
+    GameComponents.Render,
     // GameComponents.Collider, // to be removed. Currently only for testing purposes.
   ]);
 
@@ -21,10 +22,13 @@ export class Render extends ECS.System {
     this.clearCanvas();
 
     for (const entity of entities) {
-      // draw sprite
-      this.renderSprite(entity);
-      // draw collider f(or testing purposes only)
-      // this.renderCollider(entity.getComponent(GameComponents.Collider), positionComponent);
+      // render only visible in viewport game entities
+      if (entity.getComponent(GameComponents.Render).isVisible) {
+        // draw sprite
+        this.renderSprite(entity);
+        // draw collider f(or testing purposes only)
+        // this.renderCollider(entity.getComponent(GameComponents.Collider), positionComponent);
+      }
     }
   }
 
@@ -43,16 +47,16 @@ export class Render extends ECS.System {
     // save context because of rotation
     this.ctx.save();
 
-    this.ctx.translate(renderComponent.viewportPositionX, renderComponent.viewportPositionY);
+    this.ctx.translate(renderComponent.viewportPosX, renderComponent.viewportPosY);
     this.ctx.rotate(MathUtils.toRad(entity.getComponent(GameComponents.Position).rotation));
-    this.ctx.translate(-renderComponent.viewportPositionX, -renderComponent.viewportPositionY);
+    this.ctx.translate(-renderComponent.viewportPosX, -renderComponent.viewportPosY);
 
     this.ctx.drawImage(
       spriteComponent.asset,
       // why Math.floor() ?
       // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas#avoid_floating-point_coordinates_and_use_integers_instead
-      Math.floor(renderComponent.viewportPositionX + spriteComponent.dx),
-      Math.floor(renderComponent.viewportPositionY + spriteComponent.dy),
+      Math.floor(renderComponent.viewportPosX + spriteComponent.dx),
+      Math.floor(renderComponent.viewportPosY + spriteComponent.dy),
       spriteComponent.width,
       spriteComponent.height,
     );

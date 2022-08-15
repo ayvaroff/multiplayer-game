@@ -74,6 +74,7 @@ const css = `
     background-color: #F2F5FF;
     border-radius: 4px;
     padding: 16px;
+    position: absolute;
     box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);
     -webkit-box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);
     -moz-box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);

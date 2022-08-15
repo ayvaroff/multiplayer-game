@@ -16,13 +16,15 @@ export interface PlayerTypeDescription {
     maxX: number;
     maxY: number;
   };
-  maxHealth: number;
-  maxShields: number;
-  maxSpeed: number;
-  accelerationSpeed: number;
-  rotationSpeed: number;
-  breakFriction: number;
-  weapons: PlayerWeaponDescription[];
+  properties: {
+    maxHealth: number;
+    maxShields: number;
+    maxSpeed: number;
+    accelerationSpeed: number;
+    rotationSpeed: number;
+    breakFriction: number;
+    weapons: PlayerWeaponDescription[];
+  };
 }
 
 export interface PlayerWeaponDescription {

@@ -1,4 +1,6 @@
-import { PlayerType } from "config";
+export type { ServerPlayerInfo } from "config";
+
+import { ServerPlayerInfo } from "config";
 
 import * as ECS from "ecs";
 import * as Core from "game-core";
@@ -9,7 +11,7 @@ interface InitOptions {
   container: HTMLElement;
   renderWidth: number;
   renderHeight: number;
-  playerType: PlayerType;
+  serverPlayerInfo: ServerPlayerInfo;
 }
 
 export class MPGame {
@@ -21,10 +23,10 @@ export class MPGame {
   }
 
   public async init(options: InitOptions): Promise<void> {
-    const { container, renderWidth, renderHeight, playerType } = options;
+    const { container, renderWidth, renderHeight, serverPlayerInfo } = options;
 
     // TODO: pass game id
-    await Core.WebSocketManger.instance.init("");
+    // await Core.WebSocketManger.instance.init("");
 
     // init canvas
     Core.CanvasManger.instance.init(container, renderWidth, renderHeight);
@@ -39,7 +41,7 @@ export class MPGame {
     this.initBackground();
 
     // then init player
-    this.initPlayer(playerType);
+    this.initPlayer(serverPlayerInfo);
 
     // finally start game when everything is ready
     this.play(0);
@@ -55,7 +57,7 @@ export class MPGame {
 
   private initGameSystems(options: InitOptions) {
     // WS message handler
-    this.world.registerSystem(new GameSystem.ServerSync());
+    // this.world.registerSystem(new GameSystem.ServerSync());
     // key + mouse inputs
     this.world.registerSystem(new GameSystem.PlayerController());
     // relative entities position calculation
@@ -67,8 +69,8 @@ export class MPGame {
     this.world.registerSystem(new GameSystem.Render());
   }
 
-  private initPlayer(playerType: PlayerType) {
-    const playerEntities = createPlayer(playerType, 300, 300, 0);
+  private initPlayer(serverPlayerInfo: ServerPlayerInfo) {
+    const playerEntities = createPlayer(serverPlayerInfo);
 
     for (const entity of playerEntities) {
       this.world.addEntity(entity);
@@ -80,14 +82,10 @@ export class MPGame {
     this.world.addEntity(backgroundEntity);
   }
 
-  private getCameraInitPosition({ renderWidth, renderHeight }: InitOptions) {
-    // TODO: get this data from backend
-    const playerInitPosX = 300;
-    const playerInitPosY = 300;
-
-    const centerWidth = renderWidth / 2;
-    const centerHeight = renderHeight / 2;
-
-    return [playerInitPosX - centerWidth, playerInitPosY - centerHeight];
+  private getCameraInitPosition({ renderWidth, renderHeight, serverPlayerInfo }: InitOptions) {
+    return [
+      serverPlayerInfo.position.x - renderWidth / 2, // center of viewport
+      serverPlayerInfo.position.y - renderHeight / 2,
+    ];
   }
 }

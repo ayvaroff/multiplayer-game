@@ -31,3 +31,33 @@ export const assetsDescriptionList: Asset[] = [
   // backgrounds
   { id: "stars-bg", url: "/backgrounds/stars_bg.png" },
 ];
+
+export interface PlayerInfo {
+  // general information
+  id: string;
+  name: string;
+  playerType: PlayerType;
+  // per player type information
+  health: string;
+  maxHealth: string;
+  shields: string;
+  maxShields: string;
+  speed: number;
+  maxSpeed: number;
+  accelerationSpeed: number;
+  rotationSpeed: number;
+  breakFriction: number;
+}
+
+export interface ServerPlayerInfo extends PlayerInfo {
+  weapons: PlayerInfoWeapon[];
+  position: {
+    x: number;
+    y: number;
+    rotation: number;
+  };
+}
+
+interface PlayerInfoWeapon {
+  id: string;
+}

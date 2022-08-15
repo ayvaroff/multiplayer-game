@@ -78,42 +78,40 @@ export class PlayerController extends ECS.System {
   }
 
   private processMovement(entity: ECS.Entity) {
-    const movementController = entity.getComponent(GameComponents.KeyboardMovementControls);
+    const playerData = entity.getComponent(GameComponents.PlayerData);
 
     // TODO: change to rotation speed
     // rotate left
     if (this.moveTo.left) {
-      entity.getComponent(GameComponents.Position).rotation -= 1 * movementController.params.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation -= 1 * playerData.rotationSpeed;
     }
 
     // TODO: change to rotation speed
     // rotate right
     if (this.moveTo.right) {
-      entity.getComponent(GameComponents.Position).rotation += 1 * movementController.params.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation += 1 * playerData.rotationSpeed;
     }
 
     // increase speed
     if (this.moveTo.forward) {
-      entity.getComponent(GameComponents.KeyboardMovementControls).speed += movementController.params.accelerationSpeed;
-      if (movementController.speed > movementController.params.maxSpeed) {
-        entity.getComponent(GameComponents.KeyboardMovementControls).speed = movementController.params.maxSpeed;
+      entity.getComponent(GameComponents.PlayerData).speed += playerData.accelerationSpeed;
+      if (playerData.speed > playerData.maxSpeed) {
+        entity.getComponent(GameComponents.PlayerData).speed = playerData.maxSpeed;
       }
     }
 
     // decrease speed
-    entity.getComponent(GameComponents.KeyboardMovementControls).speed -= this.moveTo.backwards
-      ? movementController.params.breakFriction
-      : 0.05;
+    entity.getComponent(GameComponents.PlayerData).speed -= this.moveTo.backwards ? playerData.breakFriction : 0.05;
 
-    if (movementController.speed < 0) {
-      entity.getComponent(GameComponents.KeyboardMovementControls).speed = 0;
+    if (playerData.speed < 0) {
+      entity.getComponent(GameComponents.PlayerData).speed = 0;
     }
 
     // update entity object coordinates
     entity.getComponent(GameComponents.Position).x +=
-      movementController.speed * MathUtils.sinDegree(entity.getComponent(GameComponents.Position).rotation);
+      playerData.speed * MathUtils.sinDegree(entity.getComponent(GameComponents.Position).rotation);
     entity.getComponent(GameComponents.Position).y -=
-      movementController.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
+      playerData.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
   }
 
   private processRotation(entity: ECS.Entity) {
@@ -122,8 +120,8 @@ export class PlayerController extends ECS.System {
         Math.atan2(
           // since rendering is happening relative to viewport
           // we need to calculate rotation from "GameComponents.Render"
-          this.mousePosition.y - entity.getComponent(GameComponents.Render).viewportPositionY,
-          this.mousePosition.x - entity.getComponent(GameComponents.Render).viewportPositionX,
+          this.mousePosition.y - entity.getComponent(GameComponents.Render).viewportPosY,
+          this.mousePosition.x - entity.getComponent(GameComponents.Render).viewportPosX,
         ),
       ) + 90; // a necessary 90' correction 🤷🏽‍♂️
   }
