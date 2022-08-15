@@ -26,9 +26,7 @@ if (appContainer) {
         menuInstance.close();
       })
       .catch(e => {
-        // TODO: handle showing error popup
-        // eslint-disable-next-line no-console
-        console.log("Main catch", e);
+        menuInstance.showError(e);
       });
   });
 }
