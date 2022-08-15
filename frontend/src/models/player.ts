@@ -39,7 +39,7 @@ const createShipEntity = (playerData: PlayerTypeDescription, x: number, y: numbe
     ),
   );
   playerEntity.addComponent(
-    new GameComponents.KeyboardMovementController(0, playerData.maxHealth, playerData.maxShields, {
+    new GameComponents.KeyboardMovementControls(0, playerData.maxHealth, playerData.maxShields, {
       maxHealth: playerData.maxHealth,
       maxShields: playerData.maxShields,
       maxSpeed: playerData.maxSpeed,
@@ -48,7 +48,7 @@ const createShipEntity = (playerData: PlayerTypeDescription, x: number, y: numbe
       breakFriction: playerData.breakFriction,
     }),
   );
-  playerEntity.addComponent(new GameComponents.PlayerController());
+  playerEntity.addComponent(new GameComponents.PlayerControls());
   // init camera where player should be in the center of the viewport
   playerEntity.addComponent(
     new GameComponents.Render(
@@ -91,8 +91,8 @@ const createShipWeaponsEntities = (
         weaponData.bbox.maxY,
       ),
     );
-    weaponEntity.addComponent(new GameComponents.MouseRotationController());
-    weaponEntity.addComponent(new GameComponents.PlayerController());
+    weaponEntity.addComponent(new GameComponents.MouseRotationControls());
+    weaponEntity.addComponent(new GameComponents.PlayerControls());
     weaponEntity.addComponent(
       new GameComponents.ParentController(parentEntityId, {
         x: weaponData.offset.x,

@@ -1,40 +1,42 @@
 import { PlayerType } from "config";
 
 export class Menu {
-  public show(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
+  private selectorPopup: HTMLDivElement | undefined;
+
+  public open(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
     this.createSelectorPopup(container, onSelect);
+
+    // append to container -> open
+    if (this.selectorPopup) {
+      container.appendChild(this.selectorPopup);
+    }
+  }
+
+  public close(): void {
+    this.selectorPopup?.remove();
   }
 
   private createSelectorPopup(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
-    const selectorPopup = document.createElement("div");
-    selectorPopup.className = "selectorPopup";
+    this.selectorPopup = document.createElement("div");
+    this.selectorPopup.className = "selectorPopup";
 
     // add CSS styles
     const popupStyles = document.createElement("style");
     popupStyles.appendChild(document.createTextNode(css));
-    selectorPopup.appendChild(popupStyles);
+    this.selectorPopup.appendChild(popupStyles);
 
     // create selector handler
     const handleSelect = (selectedType: PlayerType) => {
       onSelect(selectedType);
-
-      // close popup
-      selectorPopup.remove();
     };
 
     // add selector buttons
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeOne, handleSelect);
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeTwo, handleSelect);
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeThree, handleSelect);
-
-    container.appendChild(selectorPopup);
+    this.createSelectorPopupButton(PlayerType.TypeOne, handleSelect);
+    this.createSelectorPopupButton(PlayerType.TypeTwo, handleSelect);
+    this.createSelectorPopupButton(PlayerType.TypeThree, handleSelect);
   }
 
-  private createSelectorPopupButton(
-    popupContainer: HTMLDivElement,
-    playerType: PlayerType,
-    onClick: (selectedType: PlayerType) => void,
-  ): void {
+  private createSelectorPopupButton(playerType: PlayerType, onClick: (selectedType: PlayerType) => void): void {
     const selectorButton = document.createElement("div");
     selectorButton.className = "selectorButton " + playerType;
 
@@ -42,7 +44,7 @@ export class Menu {
       onClick(playerType);
     });
 
-    popupContainer.append(selectorButton);
+    this.selectorPopup?.append(selectorButton);
   }
 }
 

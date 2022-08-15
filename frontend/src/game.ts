@@ -1,7 +1,7 @@
 import { PlayerType } from "config";
 
 import * as ECS from "ecs";
-import { AssetManager, CanvasManger } from "game-core";
+import * as Core from "game-core";
 import * as GameSystem from "game-systems";
 import { createBackground, createPlayer } from "models";
 
@@ -23,11 +23,14 @@ export class MPGame {
   public async init(options: InitOptions): Promise<void> {
     const { container, renderWidth, renderHeight, playerType } = options;
 
+    // TODO: pass game id
+    await Core.WebSocketManger.instance.init("");
+
     // init canvas
-    CanvasManger.instance.init(container, renderWidth, renderHeight);
+    Core.CanvasManger.instance.init(container, renderWidth, renderHeight);
 
     // load game assets
-    await AssetManager.instance.init();
+    await Core.AssetManager.instance.init();
 
     // then init game systems
     this.initGameSystems(options);
@@ -52,9 +55,9 @@ export class MPGame {
 
   private initGameSystems(options: InitOptions) {
     // WS message handler
-    this.world.registerSystem(new GameSystem.WSConnection());
+    this.world.registerSystem(new GameSystem.ServerSync());
     // key + mouse inputs
-    this.world.registerSystem(new GameSystem.InputsController());
+    this.world.registerSystem(new GameSystem.PlayerController());
     // relative entities position calculation
     this.world.registerSystem(new GameSystem.ParentSync());
     // viewport relative position calculation

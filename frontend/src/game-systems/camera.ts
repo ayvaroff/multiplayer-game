@@ -32,7 +32,7 @@ export class Camera extends ECS.System {
     // update camera according to player ship position
     for (const entity of entities) {
       // only ship is required since weapons position are relative to it
-      if (entity.hasComponent(GameComponents.KeyboardMovementController)) {
+      if (entity.hasComponent(GameComponents.KeyboardMovementControls)) {
         const playerPosition = entity.getComponent(GameComponents.Position);
 
         // check X-axis

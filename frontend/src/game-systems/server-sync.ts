@@ -1,7 +1,6 @@
-import { config } from "config";
-
 import * as ECS from "ecs";
 import * as GameComponents from "game-components";
+import { WebSocketManger } from "game-core";
 
 // TODO: make following types more strict
 interface ServerMessage {
@@ -13,21 +12,15 @@ interface GameMessage {
   data: Record<string, unknown>;
 }
 
-export class WSConnection extends ECS.System {
+export class ServerSync extends ECS.System {
   public requiredComponents: Set<Function> = new Set([GameComponents.Position, GameComponents.GameObject]);
 
-  private websocket: WebSocket;
+  private websocket: WebSocket = WebSocketManger.instance.getWS();
   private lastTick = 0;
   private latestServerState: ServerMessage = { type: "", data: {} };
 
   constructor() {
     super();
-
-    this.websocket = new WebSocket(config.wsServerHost + "/game/run");
-
-    this.websocket.onerror = () => {
-      // TODO: handle it properly
-    };
 
     this.websocket.onmessage = message => {
       const parsedWSMessage = JSON.parse(message.data) as ServerMessage;
@@ -58,7 +51,7 @@ export class WSConnection extends ECS.System {
     // TODO: send WS message about current local state
     for (const entity of entities) {
       // send player position
-      if (entity.hasComponent(GameComponents.PlayerController)) {
+      if (entity.hasComponent(GameComponents.PlayerControls)) {
         const playerPosition = entity.getComponent(GameComponents.Position);
 
         this.websocket.send(
