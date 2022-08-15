@@ -1,3 +1,4 @@
+export { Camera } from "./camera";
 export { InputsController } from "./inputs-controller";
 export { ParentSync } from "./parent-sync";
 export { Render } from "./render";

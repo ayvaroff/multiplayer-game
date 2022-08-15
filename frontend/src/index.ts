@@ -4,7 +4,11 @@ import { Menu } from "menu";
 const appContainer = document.getElementById("app");
 
 if (appContainer) {
+  // apply styles to container
   appContainer.style.backgroundColor = "#1C1C1C";
+  appContainer.style.display = "flex";
+  appContainer.style.alignItems = "center";
+  appContainer.style.justifyContent = "center";
 
   const gameInstance = new MPGame();
   const menuInstance = new Menu();
@@ -13,9 +17,10 @@ if (appContainer) {
     gameInstance
       .init({
         container: appContainer,
-        renderWidth: window.innerWidth,
-        renderHeight: window.innerHeight,
         playerType: selectedType,
+        // fixed canvas dimensions
+        renderWidth: 1280,
+        renderHeight: 720,
       })
       .catch(e => {
         // TODO: handle showing error popup

@@ -6,7 +6,6 @@ export class Render extends ECS.System {
   public requiredComponents: Set<Function> = new Set([
     GameComponents.Sprite,
     GameComponents.Position,
-    GameComponents.BoundingBox,
     // GameComponents.Collider, // to be removed. Currently only for testing purposes.
   ]);
 
@@ -22,9 +21,8 @@ export class Render extends ECS.System {
     this.clearCanvas();
 
     for (const entity of entities) {
-      const positionComponent = entity.getComponent(GameComponents.Position);
       // draw sprite
-      this.renderSprite(entity.getComponent(GameComponents.Sprite), positionComponent);
+      this.renderSprite(entity);
       // draw collider f(or testing purposes only)
       // this.renderCollider(entity.getComponent(GameComponents.Collider), positionComponent);
     }
@@ -38,20 +36,23 @@ export class Render extends ECS.System {
   }
 
   // Renderers ---------------------
-  private renderSprite(spriteComponent: GameComponents.Sprite, positionComponent: GameComponents.Position) {
+  private renderSprite(entity: ECS.Entity) {
+    const spriteComponent = entity.getComponent(GameComponents.Sprite);
+    const renderComponent = entity.getComponent(GameComponents.Render);
+
     // save context because of rotation
     this.ctx.save();
 
-    this.ctx.translate(positionComponent.x, positionComponent.y);
-    this.ctx.rotate(MathUtils.toRad(positionComponent.rotation));
-    this.ctx.translate(-positionComponent.x, -positionComponent.y);
+    this.ctx.translate(renderComponent.viewportPositionX, renderComponent.viewportPositionY);
+    this.ctx.rotate(MathUtils.toRad(entity.getComponent(GameComponents.Position).rotation));
+    this.ctx.translate(-renderComponent.viewportPositionX, -renderComponent.viewportPositionY);
 
     this.ctx.drawImage(
       spriteComponent.asset,
-      // Why Math.floor() ?
+      // why Math.floor() ?
       // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas#avoid_floating-point_coordinates_and_use_integers_instead
-      Math.floor(positionComponent.x + spriteComponent.dx),
-      Math.floor(positionComponent.y + spriteComponent.dy),
+      Math.floor(renderComponent.viewportPositionX + spriteComponent.dx),
+      Math.floor(renderComponent.viewportPositionY + spriteComponent.dy),
       spriteComponent.width,
       spriteComponent.height,
     );

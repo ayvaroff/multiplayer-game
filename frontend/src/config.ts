@@ -28,4 +28,6 @@ export const assetsDescriptionList: Asset[] = [
   // weapons
   { id: "cannon-small", url: "/weapons/cannon_small.png" },
   { id: "cannon-medium", url: "/weapons/cannon_medium.png" },
+  // backgrounds
+  { id: "stars-bg", url: "/backgrounds/stars_bg.png" },
 ];

@@ -2,7 +2,7 @@ import { PlayerType } from "config";
 
 import * as ECS from "ecs";
 import * as GameComponents from "game-components";
-import { AssetManager } from "game-core";
+import { AssetManager, CanvasManger } from "game-core";
 
 import { createPlayerTypeData } from "./player-types/creator";
 import type { PlayerTypeDescription } from "./player-types/types";
@@ -49,6 +49,14 @@ const createShipEntity = (playerData: PlayerTypeDescription, x: number, y: numbe
     }),
   );
   playerEntity.addComponent(new GameComponents.PlayerController());
+  // init camera where player should be in the center of the viewport
+  playerEntity.addComponent(
+    new GameComponents.Render(
+      CanvasManger.instance.getCanvasSize().width / 2,
+      CanvasManger.instance.getCanvasSize().height / 2,
+      true,
+    ),
+  );
 
   return playerEntity;
 };
@@ -91,6 +99,7 @@ const createShipWeaponsEntities = (
         y: weaponData.offset.y,
       }),
     );
+    weaponEntity.addComponent(new GameComponents.Render());
 
     weaponEntities.push(weaponEntity);
   }
