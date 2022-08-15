@@ -1,5 +1,7 @@
 type Point = [number, number];
 
+const toDegree = (rad: number): number => (rad * 180) / Math.PI;
+
 const toRad = (degree: number): number => (degree * Math.PI) / 180;
 
 const cosDegree = (degree: number): number => Math.cos(toRad(degree));
@@ -27,6 +29,7 @@ const rotatePoint = ([x, y]: Point, [centerX, centerY]: Point, degree: number): 
 };
 
 export const MathUtils = {
+  toDegree: toDegree,
   toRad: toRad,
   cosDegree: cosDegree,
   sinDegree: sinDegree,

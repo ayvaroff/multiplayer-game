@@ -50,7 +50,12 @@ export class InputsController extends ECS.System {
     this.lastTick = tick;
 
     for (const entity of entities) {
-      this.processEntityMovement(entity);
+      if (entity.hasComponent(GameComponents.KeyboardMovementController)) {
+        this.processEntityMovement(entity);
+      }
+      if (entity.hasComponent(GameComponents.MouseRotationController)) {
+        this.processEntityRotation(entity);
+      }
     }
   }
 
@@ -72,41 +77,52 @@ export class InputsController extends ECS.System {
   }
 
   private processEntityMovement(entity: ECS.Entity) {
-    const playerController = entity.getComponent(GameComponents.PlayerController);
+    const movementController = entity.getComponent(GameComponents.KeyboardMovementController);
 
     // TODO: change to rotation speed
     // rotate left
     if (this.moveTo.left) {
-      entity.getComponent(GameComponents.Position).rotation -= 1 * playerController.params.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation -= 1 * movementController.params.rotationSpeed;
     }
 
     // TODO: change to rotation speed
     // rotate right
     if (this.moveTo.right) {
-      entity.getComponent(GameComponents.Position).rotation += 1 * playerController.params.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation += 1 * movementController.params.rotationSpeed;
     }
 
     // increase speed
     if (this.moveTo.forward) {
-      entity.getComponent(GameComponents.PlayerController).speed += playerController.params.accelerationSpeed;
-      if (playerController.speed > playerController.params.maxSpeed) {
-        entity.getComponent(GameComponents.PlayerController).speed = playerController.params.maxSpeed;
+      entity.getComponent(GameComponents.KeyboardMovementController).speed +=
+        movementController.params.accelerationSpeed;
+      if (movementController.speed > movementController.params.maxSpeed) {
+        entity.getComponent(GameComponents.KeyboardMovementController).speed = movementController.params.maxSpeed;
       }
     }
 
     // decrease speed
-    entity.getComponent(GameComponents.PlayerController).speed -= this.moveTo.backwards
-      ? playerController.params.breakFriction
+    entity.getComponent(GameComponents.KeyboardMovementController).speed -= this.moveTo.backwards
+      ? movementController.params.breakFriction
       : 0.05;
 
-    if (playerController.speed < 0) {
-      entity.getComponent(GameComponents.PlayerController).speed = 0;
+    if (movementController.speed < 0) {
+      entity.getComponent(GameComponents.KeyboardMovementController).speed = 0;
     }
 
     // update entity object coordinates
     entity.getComponent(GameComponents.Position).x +=
-      playerController.speed * MathUtils.sinDegree(entity.getComponent(GameComponents.Position).rotation);
+      movementController.speed * MathUtils.sinDegree(entity.getComponent(GameComponents.Position).rotation);
     entity.getComponent(GameComponents.Position).y -=
-      playerController.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
+      movementController.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
+  }
+
+  private processEntityRotation(entity: ECS.Entity) {
+    entity.getComponent(GameComponents.Position).rotation =
+      MathUtils.toDegree(
+        Math.atan2(
+          this.mousePosition.y - entity.getComponent(GameComponents.Position).y,
+          this.mousePosition.x - entity.getComponent(GameComponents.Position).x,
+        ),
+      ) + 90; // a necessary 90' correction 🤷🏽‍♂️
   }
 }

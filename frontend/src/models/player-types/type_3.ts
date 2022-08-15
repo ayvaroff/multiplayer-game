@@ -1,7 +1,7 @@
 import type { PlayerTypeDescription } from "./types";
 
 export const createPlayerTypeThreeDescription = (): PlayerTypeDescription => ({
-  assetId: "big-ship",
+  assetId: "ship-big",
   size: {
     width: 128,
     height: 256,
@@ -30,4 +30,63 @@ export const createPlayerTypeThreeDescription = (): PlayerTypeDescription => ({
   accelerationSpeed: 0.11,
   rotationSpeed: 1.2,
   breakFriction: 0.08,
+  weapons: [
+    {
+      assetId: "cannon-small",
+      size: {
+        width: 32,
+        height: 32,
+        dx: -16,
+        dy: -16,
+      },
+      bbox: {
+        minX: -16,
+        minY: -16,
+        maxX: 16,
+        maxY: 16,
+      },
+      offset: {
+        x: 0,
+        y: -70,
+      },
+    },
+    {
+      assetId: "cannon-small",
+      size: {
+        width: 32,
+        height: 32,
+        dx: -16,
+        dy: -16,
+      },
+      bbox: {
+        minX: -16,
+        minY: -16,
+        maxX: 16,
+        maxY: 16,
+      },
+      offset: {
+        x: 0,
+        y: -37,
+      },
+    },
+    {
+      assetId: "cannon-medium",
+      size: {
+        width: 64,
+        height: 64,
+        dx: -32,
+        dy: -32,
+      },
+      bbox: {
+        minX: -32,
+        minY: -32,
+        maxX: 32,
+        maxY: 32,
+      },
+      offset: {
+        x: 0,
+        y: 10,
+      },
+    },
+  ],
 });
