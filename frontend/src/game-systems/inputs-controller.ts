@@ -3,10 +3,10 @@ import * as GameComponents from "game-components";
 import { CanvasManger, MathUtils } from "game-core";
 
 enum KeyCodes {
-  KeyW = "W",
-  KeyA = "A",
-  KeyS = "S",
-  KeyD = "D",
+  KeyW = "KeyW",
+  KeyA = "KeyA",
+  KeyS = "KeyS",
+  KeyD = "KeyD",
 }
 
 export class InputsController extends ECS.System {
@@ -26,16 +26,17 @@ export class InputsController extends ECS.System {
 
     // init mouse listener only for canvas
     CanvasManger.instance.getCanvas().addEventListener("mousemove", mouseEvent => {
-      this.mousePosition.x = mouseEvent.clientX;
-      this.mousePosition.y = mouseEvent.clientY;
+      // we need coordinates relative to canvas
+      this.mousePosition.x = mouseEvent.offsetX;
+      this.mousePosition.y = mouseEvent.offsetY;
     });
 
     // init keydown listeners for whole document
     document.addEventListener("keydown", keyDownEvent => {
-      this.registerKey(keyDownEvent.key.toUpperCase());
+      this.registerKey(keyDownEvent.code);
     });
     document.addEventListener("keyup", keyUpEvent => {
-      this.registerKey(keyUpEvent.key.toUpperCase(), false);
+      this.registerKey(keyUpEvent.code, false);
     });
   }
 
@@ -51,16 +52,16 @@ export class InputsController extends ECS.System {
 
     for (const entity of entities) {
       if (entity.hasComponent(GameComponents.KeyboardMovementController)) {
-        this.processEntityMovement(entity);
+        this.processMovement(entity);
       }
       if (entity.hasComponent(GameComponents.MouseRotationController)) {
-        this.processEntityRotation(entity);
+        this.processRotation(entity);
       }
     }
   }
 
-  private registerKey(key: string, keydown = true) {
-    switch (key) {
+  private registerKey(keyCode: string, keydown = true) {
+    switch (keyCode) {
       case KeyCodes.KeyA:
         this.moveTo.left = keydown;
         break;
@@ -76,7 +77,7 @@ export class InputsController extends ECS.System {
     }
   }
 
-  private processEntityMovement(entity: ECS.Entity) {
+  private processMovement(entity: ECS.Entity) {
     const movementController = entity.getComponent(GameComponents.KeyboardMovementController);
 
     // TODO: change to rotation speed
@@ -116,12 +117,14 @@ export class InputsController extends ECS.System {
       movementController.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
   }
 
-  private processEntityRotation(entity: ECS.Entity) {
+  private processRotation(entity: ECS.Entity) {
     entity.getComponent(GameComponents.Position).rotation =
       MathUtils.toDegree(
         Math.atan2(
-          this.mousePosition.y - entity.getComponent(GameComponents.Position).y,
-          this.mousePosition.x - entity.getComponent(GameComponents.Position).x,
+          // since rendering is happening relative to viewport
+          // we need to calculate rotation from "GameComponents.Render"
+          this.mousePosition.y - entity.getComponent(GameComponents.Render).viewportPositionY,
+          this.mousePosition.x - entity.getComponent(GameComponents.Render).viewportPositionX,
         ),
       ) + 90; // a necessary 90' correction 🤷🏽‍♂️
   }
