@@ -13,6 +13,10 @@ export class World {
     this.setEntityToSystems(entity);
   }
 
+  public getEntityById(entityId: string): Entity | undefined {
+    return this.entities.get(entityId);
+  }
+
   /**
    * Marks entity for removal.
    */

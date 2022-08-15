@@ -3,7 +3,7 @@ import { PlayerType } from "config";
 import * as ECS from "ecs";
 import { AssetManager, CanvasManger } from "game-core";
 import * as GameSystem from "game-systems";
-import { createEnemyPlayer, createPlayer } from "models";
+import { createPlayer } from "models";
 
 interface InitOptions {
   container: HTMLElement;
@@ -50,12 +50,17 @@ export class MPGame {
     this.world.registerSystem(new GameSystem.WSConnection());
     // key + mouse inputs
     this.world.registerSystem(new GameSystem.InputsController());
+    // relative entities position calculation
+    this.world.registerSystem(new GameSystem.ParentSync());
     // canvas render
     this.world.registerSystem(new GameSystem.Render());
   }
 
   private initPlayer(playerType: PlayerType) {
-    this.world.addEntity(createEnemyPlayer(PlayerType.TypeOne, 500, 500, 45));
-    this.world.addEntity(createPlayer(playerType, 300, 300, 0));
+    const playerEntities = createPlayer(playerType, 300, 300, 0);
+
+    for (const entity of playerEntities) {
+      this.world.addEntity(entity);
+    }
   }
 }

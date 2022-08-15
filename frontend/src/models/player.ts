@@ -5,11 +5,18 @@ import * as GameComponents from "game-components";
 import { AssetManager } from "game-core";
 
 import { createPlayerTypeData } from "./player-types/creator";
+import type { PlayerTypeDescription } from "./player-types/types";
 
-export const createPlayer = (playerType: PlayerType, x: number, y: number, deg: number): ECS.Entity => {
-  const playerEntity = new ECS.Entity();
-
+export const createPlayer = (playerType: PlayerType, x: number, y: number, deg: number): ECS.Entity[] => {
   const playerData = createPlayerTypeData(playerType);
+
+  const playerShipEntity = createShipEntity(playerData, x, y, deg);
+
+  return [playerShipEntity, ...createShipWeaponsEntities(playerData, x, y, deg, playerShipEntity.id)];
+};
+
+const createShipEntity = (playerData: PlayerTypeDescription, x: number, y: number, deg: number): ECS.Entity => {
+  const playerEntity = new ECS.Entity();
 
   playerEntity.addComponent(new GameComponents.Position(x, y, deg));
   playerEntity.addComponent(new GameComponents.Collider(playerData.collider));
@@ -32,7 +39,7 @@ export const createPlayer = (playerType: PlayerType, x: number, y: number, deg: 
     ),
   );
   playerEntity.addComponent(
-    new GameComponents.PlayerController(0, playerData.maxHealth, playerData.maxShields, {
+    new GameComponents.KeyboardMovementController(0, playerData.maxHealth, playerData.maxShields, {
       maxHealth: playerData.maxHealth,
       maxShields: playerData.maxShields,
       maxSpeed: playerData.maxSpeed,
@@ -41,6 +48,52 @@ export const createPlayer = (playerType: PlayerType, x: number, y: number, deg: 
       breakFriction: playerData.breakFriction,
     }),
   );
+  playerEntity.addComponent(new GameComponents.PlayerController());
 
   return playerEntity;
+};
+
+const createShipWeaponsEntities = (
+  playerData: PlayerTypeDescription,
+  x: number,
+  y: number,
+  deg: number,
+  parentEntityId: string,
+): ECS.Entity[] => {
+  const weaponEntities: ECS.Entity[] = [];
+
+  for (const weaponData of playerData.weapons) {
+    const weaponEntity = new ECS.Entity();
+
+    weaponEntity.addComponent(new GameComponents.Position(x + weaponData.offset.x, y + weaponData.offset.y, deg));
+    weaponEntity.addComponent(
+      new GameComponents.Sprite(
+        AssetManager.instance.getAsset(weaponData.assetId).asset,
+        weaponData.size.dx,
+        weaponData.size.dy,
+        weaponData.size.width,
+        weaponData.size.height,
+      ),
+    );
+    weaponEntity.addComponent(
+      new GameComponents.BoundingBox(
+        weaponData.bbox.minX,
+        weaponData.bbox.minY,
+        weaponData.bbox.maxX,
+        weaponData.bbox.maxY,
+      ),
+    );
+    weaponEntity.addComponent(new GameComponents.MouseRotationController());
+    weaponEntity.addComponent(new GameComponents.PlayerController());
+    weaponEntity.addComponent(
+      new GameComponents.ParentController(parentEntityId, {
+        x: weaponData.offset.x,
+        y: weaponData.offset.y,
+      }),
+    );
+
+    weaponEntities.push(weaponEntity);
+  }
+
+  return weaponEntities;
 };

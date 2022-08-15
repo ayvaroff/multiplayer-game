@@ -7,7 +7,7 @@ export class Render extends ECS.System {
     GameComponents.Sprite,
     GameComponents.Position,
     GameComponents.BoundingBox,
-    GameComponents.Collider, // to be removed. Currently only for testing purposes.
+    // GameComponents.Collider, // to be removed. Currently only for testing purposes.
   ]);
 
   // set private reference to ctx and canvas
@@ -25,8 +25,8 @@ export class Render extends ECS.System {
       const positionComponent = entity.getComponent(GameComponents.Position);
       // draw sprite
       this.renderSprite(entity.getComponent(GameComponents.Sprite), positionComponent);
-      // draw collider
-      this.renderCollider(entity.getComponent(GameComponents.Collider), positionComponent);
+      // draw collider f(or testing purposes only)
+      // this.renderCollider(entity.getComponent(GameComponents.Collider), positionComponent);
     }
   }
 
@@ -61,7 +61,6 @@ export class Render extends ECS.System {
 
   private renderCollider({ collider }: GameComponents.Collider, positionComponent: GameComponents.Position) {
     if (collider.length) {
-      // For testing purposes only
       // modify collide coordinates to render it with rotation
       const rotatedCollider = collider.map(coordinate =>
         MathUtils.rotateRelativePoint(coordinate, positionComponent.rotation),

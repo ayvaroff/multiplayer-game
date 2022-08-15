@@ -21,7 +21,11 @@ export interface Asset {
  * {@link https://zintoki.itch.io/space-breaker}
  */
 export const assetsDescriptionList: Asset[] = [
-  { id: "small-ship", url: "/ships/ship_small.png" },
-  { id: "medium-ship", url: "/ships/ship_medium.png" },
-  { id: "big-ship", url: "/ships/ship_big.png" },
+  // ships
+  { id: "ship-small", url: "/ships/ship_small.png" },
+  { id: "ship-medium", url: "/ships/ship_medium.png" },
+  { id: "ship-big", url: "/ships/ship_big.png" },
+  // weapons
+  { id: "cannon-small", url: "/weapons/cannon_small.png" },
+  { id: "cannon-medium", url: "/weapons/cannon_medium.png" },
 ];
