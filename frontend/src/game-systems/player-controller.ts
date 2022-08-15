@@ -9,8 +9,8 @@ enum KeyCodes {
   KeyD = "KeyD",
 }
 
-export class InputsController extends ECS.System {
-  public requiredComponents: Set<Function> = new Set([GameComponents.PlayerController]);
+export class PlayerController extends ECS.System {
+  public requiredComponents: Set<Function> = new Set([GameComponents.PlayerControls]);
 
   private lastTick = 0;
   private mousePosition = { x: 0, y: 0 };
@@ -51,10 +51,10 @@ export class InputsController extends ECS.System {
     this.lastTick = tick;
 
     for (const entity of entities) {
-      if (entity.hasComponent(GameComponents.KeyboardMovementController)) {
+      if (entity.hasComponent(GameComponents.KeyboardMovementControls)) {
         this.processMovement(entity);
       }
-      if (entity.hasComponent(GameComponents.MouseRotationController)) {
+      if (entity.hasComponent(GameComponents.MouseRotationControls)) {
         this.processRotation(entity);
       }
     }
@@ -78,7 +78,7 @@ export class InputsController extends ECS.System {
   }
 
   private processMovement(entity: ECS.Entity) {
-    const movementController = entity.getComponent(GameComponents.KeyboardMovementController);
+    const movementController = entity.getComponent(GameComponents.KeyboardMovementControls);
 
     // TODO: change to rotation speed
     // rotate left
@@ -94,20 +94,19 @@ export class InputsController extends ECS.System {
 
     // increase speed
     if (this.moveTo.forward) {
-      entity.getComponent(GameComponents.KeyboardMovementController).speed +=
-        movementController.params.accelerationSpeed;
+      entity.getComponent(GameComponents.KeyboardMovementControls).speed += movementController.params.accelerationSpeed;
       if (movementController.speed > movementController.params.maxSpeed) {
-        entity.getComponent(GameComponents.KeyboardMovementController).speed = movementController.params.maxSpeed;
+        entity.getComponent(GameComponents.KeyboardMovementControls).speed = movementController.params.maxSpeed;
       }
     }
 
     // decrease speed
-    entity.getComponent(GameComponents.KeyboardMovementController).speed -= this.moveTo.backwards
+    entity.getComponent(GameComponents.KeyboardMovementControls).speed -= this.moveTo.backwards
       ? movementController.params.breakFriction
       : 0.05;
 
     if (movementController.speed < 0) {
-      entity.getComponent(GameComponents.KeyboardMovementController).speed = 0;
+      entity.getComponent(GameComponents.KeyboardMovementControls).speed = 0;
     }
 
     // update entity object coordinates

@@ -13,7 +13,7 @@ if (appContainer) {
   const gameInstance = new MPGame();
   const menuInstance = new Menu();
 
-  menuInstance.show(appContainer, selectedType => {
+  menuInstance.open(appContainer, selectedType => {
     gameInstance
       .init({
         container: appContainer,
@@ -22,10 +22,11 @@ if (appContainer) {
         renderWidth: 1280,
         renderHeight: 720,
       })
+      .then(() => {
+        menuInstance.close();
+      })
       .catch(e => {
-        // TODO: handle showing error popup
-        // eslint-disable-next-line no-console
-        console.log("Main catch", e);
+        menuInstance.showError(e);
       });
   });
 }

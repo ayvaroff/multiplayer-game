@@ -1,37 +1,60 @@
 import { PlayerType } from "config";
 
 export class Menu {
-  public show(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
+  private selectorPopup: HTMLDivElement | undefined;
+  private errorMessage: HTMLDivElement | undefined;
+
+  public open(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
     this.createSelectorPopup(container, onSelect);
+
+    // append to container -> open
+    if (this.selectorPopup) {
+      container.appendChild(this.selectorPopup);
+    }
+  }
+
+  public close(): void {
+    this.selectorPopup?.remove();
+  }
+
+  public showError(message: string): void {
+    // remove first if exist
+    this.errorMessage?.remove();
+
+    // then create
+    this.errorMessage = document.createElement("div");
+
+    this.errorMessage.className = "errorMessage";
+    this.errorMessage.innerHTML = message;
+
+    this.selectorPopup?.appendChild(this.errorMessage);
   }
 
   private createSelectorPopup(container: HTMLElement, onSelect: (selectedType: PlayerType) => void): void {
-    const selectorPopup = document.createElement("div");
-    selectorPopup.className = "selectorPopup";
+    this.selectorPopup = document.createElement("div");
+    this.selectorPopup.className = "selectorPopup";
 
     // add CSS styles
     const popupStyles = document.createElement("style");
     popupStyles.appendChild(document.createTextNode(css));
-    selectorPopup.appendChild(popupStyles);
+    this.selectorPopup.appendChild(popupStyles);
 
     // create selector handler
     const handleSelect = (selectedType: PlayerType) => {
       onSelect(selectedType);
-
-      // close popup
-      selectorPopup.remove();
     };
 
     // add selector buttons
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeOne, handleSelect);
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeTwo, handleSelect);
-    this.createSelectorPopupButton(selectorPopup, PlayerType.TypeThree, handleSelect);
-
-    container.appendChild(selectorPopup);
+    const selectorButtonsContainer = document.createElement("div");
+    selectorButtonsContainer.className = "selectorPopupContainer";
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeOne, handleSelect);
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeTwo, handleSelect);
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeThree, handleSelect);
+    this.selectorPopup.appendChild(selectorButtonsContainer);
   }
 
   private createSelectorPopupButton(
-    popupContainer: HTMLDivElement,
+    container: HTMLDivElement,
     playerType: PlayerType,
     onClick: (selectedType: PlayerType) => void,
   ): void {
@@ -42,28 +65,27 @@ export class Menu {
       onClick(playerType);
     });
 
-    popupContainer.append(selectorButton);
+    container.append(selectorButton);
   }
 }
 
 const css = `
   .selectorPopup {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #F2F5FF;
     border-radius: 4px;
     padding: 16px;
     box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);
     -webkit-box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);
     -moz-box-shadow: 0px 34px 102px -22px rgba(97,97,97,0.61);
+  }
 
-    position: absolute;
+  .selectorPopupContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
     width: 500px;
     height: 300px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
   }
 
   .selectorButton {
@@ -83,4 +105,13 @@ const css = `
   .selectorButton.TypeOne { background-image: url(/ships/ship_small.png); }
   .selectorButton.TypeTwo { background-image: url(/ships/ship_medium.png); }
   .selectorButton.TypeThree { background-image: url(/ships/ship_big.png); }
+
+  .errorMessage {
+    color: red;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    padding-top: 16px;
+  }
 `;

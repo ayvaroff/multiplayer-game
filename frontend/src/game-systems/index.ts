@@ -1,5 +1,5 @@
 export { Camera } from "./camera";
-export { InputsController } from "./inputs-controller";
 export { ParentSync } from "./parent-sync";
+export { PlayerController } from "./player-controller";
 export { Render } from "./render";
-export { WSConnection } from "./ws";
+export { ServerSync } from "./server-sync";
