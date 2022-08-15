@@ -19,16 +19,14 @@ export const createBackground = (): ECS.Entity => {
       WORLD_SIZE,
     ),
   );
-  // bbox is the same as viewport size
   backgroundEntity.addComponent(
-    new GameComponents.BoundingBox(
-      -3000, // WORLD_SIZE / 2
-      -3000,
-      3000, // WORLD_SIZE / 2
-      3000,
-    ),
+    new GameComponents.Render({
+      minX: -3000, // WORLD_SIZE / 2
+      minY: -3000,
+      maxX: 3000, // WORLD_SIZE / 2
+      maxY: 3000,
+    }),
   );
-  backgroundEntity.addComponent(new GameComponents.Render());
 
   return backgroundEntity;
 };

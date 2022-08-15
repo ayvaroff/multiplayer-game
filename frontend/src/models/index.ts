@@ -1,3 +1,3 @@
 export { createBackground } from "./background";
-export { createEnemyPlayer } from "./enemy-player";
+export { createOtherPlayer } from "./other-player";
 export { createPlayer } from "./player";

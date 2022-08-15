@@ -18,37 +18,41 @@ export const createPlayerTypeOneDescription = (): PlayerTypeDescription => ({
     [-15, -17],
     [-6, -33],
   ],
+  // for simplicity assume that bounding box is a square
+  // that fits entity with any rotation
   bbox: {
-    minX: -16,
-    minY: -32,
-    maxX: 16,
-    maxY: 32,
+    minX: -35,
+    minY: -35,
+    maxX: 35,
+    maxY: 35,
   },
-  maxHealth: 100,
-  maxShields: 100,
-  maxSpeed: 20,
-  accelerationSpeed: 0.7,
-  rotationSpeed: 5,
-  breakFriction: 0.5,
-  weapons: [
-    {
-      assetId: "cannon-small",
-      size: {
-        width: 32,
-        height: 32,
-        dx: -16,
-        dy: -16,
+  properties: {
+    maxHealth: 100,
+    maxShields: 100,
+    maxSpeed: 20,
+    accelerationSpeed: 0.7,
+    rotationSpeed: 5,
+    breakFriction: 0.5,
+    weapons: [
+      {
+        assetId: "cannon-small",
+        size: {
+          width: 32,
+          height: 32,
+          dx: -16,
+          dy: -16,
+        },
+        bbox: {
+          minX: -16,
+          minY: -16,
+          maxX: 16,
+          maxY: 16,
+        },
+        offset: {
+          x: 0,
+          y: 0,
+        },
       },
-      bbox: {
-        minX: -16,
-        minY: -16,
-        maxX: 16,
-        maxY: 16,
-      },
-      offset: {
-        x: 0,
-        y: 0,
-      },
-    },
-  ],
+    ],
+  },
 });

@@ -18,75 +18,79 @@ export const createPlayerTypeThreeDescription = (): PlayerTypeDescription => ({
     [-50, -35],
     [-17, -130],
   ],
+  // for simplicity assume that bounding box is a square
+  // that fits entity with any rotation
   bbox: {
-    minX: -64,
-    minY: -128,
-    maxX: 64,
-    maxY: 128,
+    minX: -133,
+    minY: -133,
+    maxX: 133,
+    maxY: 133,
   },
-  maxHealth: 200,
-  maxShields: 200,
-  maxSpeed: 10,
-  accelerationSpeed: 0.11,
-  rotationSpeed: 1.2,
-  breakFriction: 0.08,
-  weapons: [
-    {
-      assetId: "cannon-small",
-      size: {
-        width: 32,
-        height: 32,
-        dx: -16,
-        dy: -16,
+  properties: {
+    maxHealth: 200,
+    maxShields: 200,
+    maxSpeed: 10,
+    accelerationSpeed: 0.11,
+    rotationSpeed: 1.2,
+    breakFriction: 0.08,
+    weapons: [
+      {
+        assetId: "cannon-small",
+        size: {
+          width: 32,
+          height: 32,
+          dx: -16,
+          dy: -16,
+        },
+        bbox: {
+          minX: -16,
+          minY: -16,
+          maxX: 16,
+          maxY: 16,
+        },
+        offset: {
+          x: 0,
+          y: -70,
+        },
       },
-      bbox: {
-        minX: -16,
-        minY: -16,
-        maxX: 16,
-        maxY: 16,
+      {
+        assetId: "cannon-small",
+        size: {
+          width: 32,
+          height: 32,
+          dx: -16,
+          dy: -16,
+        },
+        bbox: {
+          minX: -16,
+          minY: -16,
+          maxX: 16,
+          maxY: 16,
+        },
+        offset: {
+          x: 0,
+          y: -37,
+        },
       },
-      offset: {
-        x: 0,
-        y: -70,
+      {
+        assetId: "cannon-medium",
+        size: {
+          width: 64,
+          height: 64,
+          dx: -32,
+          dy: -32,
+        },
+        bbox: {
+          minX: -32,
+          minY: -32,
+          maxX: 32,
+          maxY: 32,
+        },
+        offset: {
+          x: 0,
+          y: 10,
+        },
       },
-    },
-    {
-      assetId: "cannon-small",
-      size: {
-        width: 32,
-        height: 32,
-        dx: -16,
-        dy: -16,
-      },
-      bbox: {
-        minX: -16,
-        minY: -16,
-        maxX: 16,
-        maxY: 16,
-      },
-      offset: {
-        x: 0,
-        y: -37,
-      },
-    },
-    {
-      assetId: "cannon-medium",
-      size: {
-        width: 64,
-        height: 64,
-        dx: -32,
-        dy: -32,
-      },
-      bbox: {
-        minX: -32,
-        minY: -32,
-        maxX: 32,
-        maxY: 32,
-      },
-      offset: {
-        x: 0,
-        y: 10,
-      },
-    },
-  ],
+    ],
+  },
 });

@@ -3,7 +3,7 @@ import * as GameComponents from "game-components";
 import { CanvasManger } from "game-core";
 
 export class Camera extends ECS.System {
-  public requiredComponents: Set<Function> = new Set([GameComponents.Render, GameComponents.BoundingBox]);
+  public requiredComponents: Set<Function> = new Set([GameComponents.Render]);
 
   private cameraWidth = CanvasManger.instance.getCanvasSize().width;
   private cameraHeight = CanvasManger.instance.getCanvasSize().height;
@@ -57,12 +57,29 @@ export class Camera extends ECS.System {
 
   private updateEntityRenderComponent(entity: ECS.Entity) {
     // update viewport position
-    entity.getComponent(GameComponents.Render).viewportPositionX =
+    entity.getComponent(GameComponents.Render).viewportPosX =
       entity.getComponent(GameComponents.Position).x - this.cameraXPosition;
-    entity.getComponent(GameComponents.Render).viewportPositionY =
+    entity.getComponent(GameComponents.Render).viewportPosY =
       entity.getComponent(GameComponents.Position).y - this.cameraYPosition;
 
-    // TODO: check if entity should be rendered
-    // entity.getComponent(GameComponents.Render).shouldRender =
+    // TODO: check if entity is visible in viewport
+    entity.getComponent(GameComponents.Render).isVisible = this.entityIsVisible(entity);
+  }
+
+  private entityIsVisible(entity: ECS.Entity) {
+    const renderComponent = entity.getComponent(GameComponents.Render);
+
+    if (
+      // check X-axis
+      (renderComponent.viewportPosX + renderComponent.bbox.maxX < 0 || // right
+        renderComponent.viewportPosX - renderComponent.bbox.minX > this.cameraWidth) && // left
+      // check Y-axis
+      (renderComponent.viewportPosY + renderComponent.bbox.maxY < 0 || // top
+        renderComponent.viewportPosY - renderComponent.bbox.minY > this.cameraHeight) // bottom
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }
