@@ -7,7 +7,7 @@ import io.circe.{Decoder, HCursor}
 object PlayerUpdateDec {
   implicit val decodePlayerUpdate: Decoder[GameEvent.PlayerUpdate] = new Decoder[GameEvent.PlayerUpdate] {
     override def apply(c: HCursor): Decoder.Result[GameEvent.PlayerUpdate] = for {
-      playerId <- getValue[String](c, "data.playerId")
+      playerId <- getValue[String](c, "data.id")
     } yield GameEvent.PlayerUpdate(playerId)
   }
 }

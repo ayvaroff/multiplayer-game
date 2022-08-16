@@ -15,9 +15,9 @@ object GameEventDec {
       for {
         messageType <- c.downField("type").as[String]
         out <- messageType match {
+          case "player.update" => Decoder[PlayerUpdate].apply(c)
           case "player.connect" => Decoder[PlayerConnect].apply(c)
           case "player.disconnect" => Decoder[PlayerDisconnect].apply(c)
-          case "player.update" => Decoder[PlayerUpdate].apply(c)
           case _ => Left(DecodingFailure(s"Unknown game event message $messageType", CursorOp.DownField("type") :: Nil))
         }
       } yield out
