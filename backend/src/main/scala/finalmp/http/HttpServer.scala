@@ -9,9 +9,11 @@ import org.http4s._
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
+import org.http4s.server.middleware.{CORS, CORSConfig}
 import org.http4s.websocket.WebSocketFrame
 import fs2.concurrent.{Topic, Queue}
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 class HttpServer[F[_]: ConcurrentEffect: Timer](
   playerController: PlayerController,
@@ -35,11 +37,19 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
       lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(9002, "localhost")
-        .withHttpApp(httpApp(gameQueue, gameTopic).orNotFound)
+        .withHttpApp(CORS(httpApp(gameQueue, gameTopic), corsConfig).orNotFound)
         .serve
       lobbyStreams = lobbyController.lobbyStreams
       _ <- tempo.merge(lobbyStreams)
       .compile
       .drain
     } yield ()
+
+    private val corsConfig: CORSConfig =
+      CORSConfig(
+        anyOrigin = false,
+        allowedOrigins = List("http://localhost:3000").toSet,
+        allowCredentials = false,
+        maxAge = 1.day.toSeconds,
+      )
 }
