@@ -1,4 +1,5 @@
 import { config } from "config";
+import type { ClientMessages } from "messages";
 
 export class WebSocketManger {
   public static instance = new WebSocketManger();
@@ -26,5 +27,12 @@ export class WebSocketManger {
       throw new Error("WebSocket was not initialized or initialized with error");
     }
     return this.websocket;
+  }
+
+  public send(message: ClientMessages): void {
+    if (!this.websocket) {
+      throw new Error("Cannot send. WebSocket was not initialized or initialized with error.");
+    }
+    this.websocket.send(JSON.stringify(message));
   }
 }

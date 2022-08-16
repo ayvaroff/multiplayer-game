@@ -1,36 +1,27 @@
+import { ServerMessages } from "messages";
+
 import * as ECS from "ecs";
 import * as GameComponents from "game-components";
 import { WebSocketManger } from "game-core";
-
-// TODO: make following types more strict
-interface ServerMessage {
-  type: string;
-  data: Record<string, unknown>;
-}
-interface GameMessage {
-  type: "player.connect" | "player.disconnect" | "player.update";
-  data: Record<string, unknown>;
-}
 
 export class ServerSync extends ECS.System {
   public requiredComponents: Set<Function> = new Set([GameComponents.Position, GameComponents.GameObject]);
 
   private websocket: WebSocket = WebSocketManger.instance.getWS();
   private lastTick = 0;
-  private latestServerState: ServerMessage = { type: "", data: {} };
+  private latestServerState: ServerMessages | null = null;
 
   constructor() {
     super();
 
-    this.websocket.onmessage = message => {
-      const parsedWSMessage = JSON.parse(message.data) as ServerMessage;
-      this.latestServerState = parsedWSMessage;
-    };
-
-    // close WS connection on refresh/close window
-    window.addEventListener("beforeunload", () => {
-      // this.websocket.close();
-    });
+    // TODO: handle with subscription patter
+    // this.websocket.onmessage = message => {
+    //   const parsedWSMessage = JSON.parse(message.data) as ServerMessages;
+    //   // process only "world.update" message here
+    //   if (parsedWSMessage.type === "world.update") {
+    //     this.latestServerState = parsedWSMessage;
+    //   }
+    // };
   }
 
   public update(entities: Set<ECS.Entity>, tick: number): void {
@@ -49,22 +40,22 @@ export class ServerSync extends ECS.System {
     }
 
     // TODO: send WS message about current local state
-    for (const entity of entities) {
-      // send player position
-      if (entity.hasComponent(GameComponents.PlayerControls)) {
-        const playerPosition = entity.getComponent(GameComponents.Position);
+    // for (const entity of entities) {
+    //   // send player position
+    //   if (entity.hasComponent(GameComponents.PlayerControls)) {
+    //     const playerPosition = entity.getComponent(GameComponents.Position);
 
-        this.websocket.send(
-          JSON.stringify({
-            type: "player.connect",
-            data: {
-              playerId: entity.id,
-              location: playerPosition,
-            },
-          } as GameMessage),
-        );
-      }
-    }
+    //     this.websocket.send(
+    //       JSON.stringify({
+    //         type: "player.connect",
+    //         data: {
+    //           playerId: entity.id,
+    //           location: playerPosition,
+    //         },
+    //       } as GameMessage),
+    //     );
+    //   }
+    // }
 
     // TODO: process received WS messages and update positions
     // - state update

@@ -3,6 +3,7 @@ package finalmp.http
 import finalmp.controllers.{PlayerController, LobbyController, TestClasses}
 import finalmp.http.services.{PlayerService, GameService, ApiService}
 import finalmp.http.HttpConfig.HttpServerConfig
+import finalmp.models.events.ServerEvent
 import cats.effect._
 import cats.syntax.all._
 import cats.effect.concurrent.Ref
@@ -22,7 +23,7 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
 
   private def httpApp(
     gameQueue: Queue[F, WebSocketFrame],
-    gameTopic: Topic[F, TestClasses.GameState]
+    gameTopic: Topic[F, ServerEvent]
   ): HttpRoutes[F] = Router(
     "/api" -> new ApiService(playerController).routes,
     "/player" -> new PlayerService(playerController).routes,
@@ -34,7 +35,7 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
       gameQueue <- Queue.bounded[F, WebSocketFrame](1000)
       initialGameStateRef <- Ref.of[F, TestClasses.GameState](TestClasses.GameState(TestClasses.PlayerMove("Start")))
       initialGameState <- initialGameStateRef.get
-      gameTopic <- Topic[F, TestClasses.GameState](initial = initialGameState)
+      gameTopic <- Topic[F, ServerEvent](initial = ServerEvent.WorldUpdate("test"))
       lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(config.port, config.host)

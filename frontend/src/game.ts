@@ -1,11 +1,12 @@
 export type { ServerPlayerInfo } from "config";
 
 import { ServerPlayerInfo } from "config";
+import { ServerMessages } from "messages";
 
 import * as ECS from "ecs";
 import * as Core from "game-core";
 import * as GameSystem from "game-systems";
-import { createBackground, createPlayer } from "models";
+import { createBackground, createOtherPlayer, createPlayer } from "models";
 
 interface InitOptions {
   container: HTMLElement;
@@ -27,6 +28,9 @@ export class MPGame {
 
     // TODO: pass game id
     await Core.WebSocketManger.instance.init("");
+
+    // init core WS handler
+    this.initWSHandler(serverPlayerInfo);
 
     // init canvas
     Core.CanvasManger.instance.init(container, renderWidth, renderHeight);
@@ -75,6 +79,11 @@ export class MPGame {
     for (const entity of playerEntities) {
       this.world.addEntity(entity);
     }
+
+    Core.WebSocketManger.instance.send({
+      type: "player.connect",
+      data: serverPlayerInfo,
+    });
   }
 
   private initBackground() {
@@ -87,5 +96,40 @@ export class MPGame {
       serverPlayerInfo.position.x - renderWidth / 2, // center of viewport
       serverPlayerInfo.position.y - renderHeight / 2,
     ];
+  }
+
+  private initWSHandler(serverPlayerInfo: ServerPlayerInfo) {
+    // close WS connection on refresh/close window
+    window.addEventListener("beforeunload", () => {
+      Core.WebSocketManger.instance.send({
+        type: "player.disconnect",
+        data: {
+          id: serverPlayerInfo.id,
+        },
+      });
+    });
+
+    // subscribe to server messages
+    Core.WebSocketManger.instance.getWS().onmessage = message => {
+      const parsedWSMessage = JSON.parse(message.data) as ServerMessages;
+
+      switch (parsedWSMessage.type) {
+        case "player.connected": {
+          // filter out current player id because this message is broadcasted to every player
+          // if not current player => another player => add to the world
+          if (parsedWSMessage.data.id !== serverPlayerInfo.id) {
+            const otherPlayerEntities = createOtherPlayer(parsedWSMessage.data);
+            for (const entity of otherPlayerEntities) {
+              this.world.addEntity(entity);
+            }
+          }
+          break;
+        }
+        case "player.disconnected":
+          // TODO: remove player from the world state
+          // this.world.removeEntity()
+          break;
+      }
+    };
   }
 }
