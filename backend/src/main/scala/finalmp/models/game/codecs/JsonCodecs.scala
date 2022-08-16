@@ -14,10 +14,12 @@ object JsonCodecs {
 
   implicit val encoderPlayer: Encoder[Player] = deriveEncoder[Player]
   implicit val decoderPlayer: Decoder[Player] = deriveDecoder[Player]
-  implicit val encoderPlayerId: Encoder[PlayerId] = deriveUnwrappedEncoder[PlayerId]
-  implicit val decoderPlayerId: Decoder[PlayerId] = deriveUnwrappedDecoder[PlayerId]
+  implicit val encoderPlayerId: Encoder[PlayerId] = Encoder.forProduct1("id")(s => (s.value))
+  implicit val decoderPlayerId: Decoder[PlayerId] = Decoder.forProduct1("id")(PlayerId.apply)
   implicit val encoderPlayerName: Encoder[PlayerName] = deriveUnwrappedEncoder[PlayerName]
   implicit val decoderPlayerName: Decoder[PlayerName] = deriveUnwrappedDecoder[PlayerName]
+  implicit val encoderPlayerTypeId: Encoder[PlayerTypeId] = Encoder.forProduct1("player_type_id")(s => (s.value))
+  implicit val decoderPlayerTypeId: Decoder[PlayerTypeId] = Decoder.forProduct1("player_type_id")(PlayerTypeId.apply)
   implicit val encoderPlayerWeaponId: Encoder[PlayerWeaponId] = deriveUnwrappedEncoder[PlayerWeaponId]
   implicit val decoderPlayerWeaponId: Decoder[PlayerWeaponId] = deriveUnwrappedDecoder[PlayerWeaponId]
   implicit val encoderPlayerWeapon: Encoder[PlayerWeapon] = deriveEncoder[PlayerWeapon]

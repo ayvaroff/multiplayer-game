@@ -10,7 +10,7 @@ object Main extends IOApp {
     for {
       _ <- IO(println("Starting server..."))
       config <- AppConfig.load[IO]
-      playerController = new PlayerController()
+      playerController = new PlayerController(config.playerTypes, config.game)
       httpServer = new HttpServer[IO](config.http.server, playerController)
       _ <- httpServer.start()
     } yield ExitCode.Success

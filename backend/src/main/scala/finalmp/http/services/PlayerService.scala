@@ -1,7 +1,7 @@
 package finalmp.http.services
 
 import finalmp.controllers.{PlayerController}
-import finalmp.models.game.PlayerId
+import finalmp.models.game.{PlayerId, PlayerTypeId}
 import finalmp.models.game.codecs.JsonCodecs._
 import cats.effect._
 import cats.syntax.all._
@@ -16,7 +16,12 @@ class PlayerService[F[_]: Sync](
 
   def routes: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "connect" => {
-      Ok(controller.createPlayer().asJson)
+      req.as[PlayerTypeId].flatMap { playerTypeId =>
+        controller.createPlayer(playerTypeId.value) match {
+          case Some(player) => Ok(player.asJson)
+          case None => BadRequest()
+        }
+      }
     }
 
     case req @ POST -> Root / "hello" =>

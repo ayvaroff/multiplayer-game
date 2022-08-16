@@ -3,6 +3,8 @@ package finalmp.models.game.configs
 import finalmp.models.game.Point
 
 object PlayerTypesConfig {
+  type Config = Map[String, PlayerType]
+
   final case class PlayerType(
     name: String,
     collider: List[Point],

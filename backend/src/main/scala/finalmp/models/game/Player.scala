@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 
 final case class PlayerId(value: String) extends AnyVal
 final case class PlayerName(value: String) extends AnyVal
+final case class PlayerTypeId(value: String) extends AnyVal
 
 final case class Player(
   id: PlayerId,
