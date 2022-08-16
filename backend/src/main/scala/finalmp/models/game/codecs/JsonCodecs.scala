@@ -1,25 +1,25 @@
 package finalmp.models.game.codecs
 
 import finalmp.models.game._
-import io.circe.generic.semiauto._
+import io.circe.generic.semiauto.{deriveEncoder, deriveDecoder}
+import io.circe.generic.extras.semiauto.{deriveUnwrappedDecoder, deriveUnwrappedEncoder}
 import io.circe.{Encoder, Decoder, KeyEncoder, KeyDecoder}
 
 object JsonCodecs {
-  implicit val encoderPoint: Encoder[Point] = deriveEncoder[Point]
-  implicit val decoderPoint: Decoder[Point] = deriveDecoder[Point]
+  implicit val encoderPoint: Encoder[Point] = deriveUnwrappedEncoder[Point]
+  implicit val decoderPoint: Decoder[Point] = deriveUnwrappedDecoder[Point]
 
   implicit val encoderPosition: Encoder[Position] = deriveEncoder[Position]
   implicit val decoderPosition: Decoder[Position] = deriveDecoder[Position]
 
-  // TODO: fix ADT unnecessary values asJson
   implicit val encoderPlayer: Encoder[Player] = deriveEncoder[Player]
   implicit val decoderPlayer: Decoder[Player] = deriveDecoder[Player]
-  implicit val encoderPlayerId: Encoder[PlayerId] = deriveEncoder[PlayerId]
-  implicit val decoderPlayerId: Decoder[PlayerId] = deriveDecoder[PlayerId]
-  implicit val encoderPlayerName: Encoder[PlayerName] = deriveEncoder[PlayerName]
-  implicit val decoderPlayerName: Decoder[PlayerName] = deriveDecoder[PlayerName]
-  implicit val encoderPlayerWeaponId: Encoder[PlayerWeaponId] = deriveEncoder[PlayerWeaponId]
-  implicit val decoderPlayerWeaponId: Decoder[PlayerWeaponId] = deriveDecoder[PlayerWeaponId]
+  implicit val encoderPlayerId: Encoder[PlayerId] = deriveUnwrappedEncoder[PlayerId]
+  implicit val decoderPlayerId: Decoder[PlayerId] = deriveUnwrappedDecoder[PlayerId]
+  implicit val encoderPlayerName: Encoder[PlayerName] = deriveUnwrappedEncoder[PlayerName]
+  implicit val decoderPlayerName: Decoder[PlayerName] = deriveUnwrappedDecoder[PlayerName]
+  implicit val encoderPlayerWeaponId: Encoder[PlayerWeaponId] = deriveUnwrappedEncoder[PlayerWeaponId]
+  implicit val decoderPlayerWeaponId: Decoder[PlayerWeaponId] = deriveUnwrappedDecoder[PlayerWeaponId]
   implicit val encoderPlayerWeapon: Encoder[PlayerWeapon] = deriveEncoder[PlayerWeapon]
   implicit val decoderPlayerWeapon: Decoder[PlayerWeapon] = deriveDecoder[PlayerWeapon]
   

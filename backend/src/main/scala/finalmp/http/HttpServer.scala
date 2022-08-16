@@ -2,6 +2,7 @@ package finalmp.http
 
 import finalmp.controllers.{PlayerController, LobbyController, TestClasses}
 import finalmp.http.services.{PlayerService, GameService, ApiService}
+import finalmp.http.HttpConfig.HttpServerConfig
 import cats.effect._
 import cats.syntax.all._
 import cats.effect.concurrent.Ref
@@ -13,9 +14,9 @@ import org.http4s.server.middleware.{CORS, CORSConfig}
 import org.http4s.websocket.WebSocketFrame
 import fs2.concurrent.{Topic, Queue}
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
 
 class HttpServer[F[_]: ConcurrentEffect: Timer](
+  config: HttpServerConfig,
   playerController: PlayerController,
 ) {
 
@@ -36,7 +37,7 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
       gameTopic <- Topic[F, TestClasses.GameState](initial = initialGameState)
       lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
-        .bindHttp(9002, "localhost")
+        .bindHttp(config.port, config.host)
         .withHttpApp(CORS(httpApp(gameQueue, gameTopic), corsConfig).orNotFound)
         .serve
       lobbyStreams = lobbyController.lobbyStreams
@@ -47,9 +48,9 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
 
     private val corsConfig: CORSConfig =
       CORSConfig(
-        anyOrigin = false,
-        allowedOrigins = List("http://localhost:3000").toSet,
-        allowCredentials = false,
-        maxAge = 1.day.toSeconds,
+        anyOrigin = config.cors.anyOrigin,
+        allowedOrigins = config.cors.allowedOrigins.toSet,
+        allowCredentials = config.cors.allowCredentials,
+        maxAge = config.cors.maxAge.toSeconds,
       )
 }

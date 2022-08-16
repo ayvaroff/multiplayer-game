@@ -16,17 +16,17 @@ class PlayerService[F[_]: Sync](
 
   def routes: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "connect" => {
-      Ok(controller.createPlayer().asJson.noSpaces)
+      Ok(controller.createPlayer().asJson)
     }
 
     case req @ POST -> Root / "hello" =>
-      // payload looks like
-      // TODO: fix it
+      // payload looks like a plain string "test_id"
+      // TODO: fix it to
       // {
-      // 	"value": "test_id"
+      // 	"id": "test_id"
       // }
       req.as[PlayerId].flatMap { playerId =>
-        Ok(s"Hello, $playerId!")
+        Ok(s"Hello, ${playerId.value}!")
       }
   }
 }
