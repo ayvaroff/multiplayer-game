@@ -13,17 +13,18 @@ import org.http4s.websocket.WebSocketFrame
 import fs2.concurrent.{Topic, Queue}
 import scala.concurrent.ExecutionContext
 
-class HttpServer[F[_]: ConcurrentEffect: Timer](
-  playerController: PlayerController,
-) {
+class HttpServer[F[_] : ConcurrentEffect : Timer](
+                                                   playerController: PlayerController,
+                                                 ) {
 
   private def httpApp(
-    gameQueue: Queue[F, WebSocketFrame],
-    gameTopic: Topic[F, TestClasses.GameState]
-  ): HttpRoutes[F] = Router(
+                       gameQueue: Queue[F, WebSocketFrame],
+                       gameTopic: Topic[F, TestClasses.GameState],
+                       pausingQueue: Queue[F, Boolean],
+                     ): HttpRoutes[F] = Router(
     "/api" -> new ApiService(playerController).routes,
     "/player" -> new PlayerService(playerController).routes,
-    "/game" -> new GameService(gameQueue, gameTopic).routes,
+    "/game" -> new GameService(gameQueue, gameTopic, pausingQueue).routes,
   )
 
   def start(): F[Unit] =
@@ -33,13 +34,15 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
       initialGameState <- initialGameStateRef.get
       gameTopic <- Topic[F, TestClasses.GameState](initial = initialGameState)
       lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
+      pausingQueue <- Queue.bounded[F, Boolean](maxSize = 1000)
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(9002, "localhost")
-        .withHttpApp(httpApp(gameQueue, gameTopic).orNotFound)
+        .withHttpApp(httpApp(gameQueue, gameTopic, pausingQueue).orNotFound)
         .serve
-      lobbyStreams = lobbyController.lobbyStreams
+      _ <- pausingQueue.enqueue1(true)
+      lobbyStreams = lobbyController.lobbyStreams(pausingQueue.dequeue)
       _ <- tempo.merge(lobbyStreams)
-      .compile
-      .drain
+        .compile
+        .drain
     } yield ()
 }

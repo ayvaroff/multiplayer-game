@@ -25,13 +25,14 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
   gameQueue: Queue[F, WebSocketFrame],
   gameTopic: Topic[F, TestClasses.GameState],
 ) {
-  def lobbyStreams(): Stream[F, Unit] = {
-    tickStream.merge(playerWorldStream)
+  def lobbyStreams(pausingStream: Stream[F, Boolean]): Stream[F, Unit] = {
+    tickStream.merge(playerWorldStream).pauseWhen(pausingStream)
   }
 
   private val tickStream: Stream[F, Unit] =
     Stream
-      .awakeEvery[F](FiniteDuration(10, TimeUnit.SECONDS))
+      .awakeEvery[F](FiniteDuration(1, TimeUnit.SECONDS))
+      .evalTap(_ => ConcurrentEffect[F].delay(println("Tick")))
       .evalMap(_ => refGameState.get)
       .through(gameTopic.publish)
 
