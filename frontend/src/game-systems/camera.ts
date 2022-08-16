@@ -63,7 +63,7 @@ export class Camera extends ECS.System {
       entity.getComponent(GameComponents.Position).y - this.cameraYPosition;
 
     // TODO: check if entity is visible in viewport
-    entity.getComponent(GameComponents.Render).isVisible = this.entityIsVisible(entity);
+    // entity.getComponent(GameComponents.Render).isVisible = this.entityIsVisible(entity);
   }
 
   private entityIsVisible(entity: ECS.Entity) {

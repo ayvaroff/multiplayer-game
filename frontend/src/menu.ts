@@ -47,9 +47,9 @@ export class Menu {
     // add selector buttons
     const selectorButtonsContainer = document.createElement("div");
     selectorButtonsContainer.className = "selectorPopupContainer";
-    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeOne, handleSelect);
-    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeTwo, handleSelect);
-    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.TypeThree, handleSelect);
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.SmallShip1, handleSelect);
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.MediumShip1, handleSelect);
+    this.createSelectorPopupButton(selectorButtonsContainer, PlayerType.BigShip1, handleSelect);
     this.selectorPopup.appendChild(selectorButtonsContainer);
   }
 
@@ -103,9 +103,9 @@ const css = `
     background-color: #CCCCCC;
   }
 
-  .selectorButton.TypeOne { background-image: url(/ships/ship_small.png); }
-  .selectorButton.TypeTwo { background-image: url(/ships/ship_medium.png); }
-  .selectorButton.TypeThree { background-image: url(/ships/ship_big.png); }
+  .selectorButton.small-ship-1 { background-image: url(/ships/ship_small.png); }
+  .selectorButton.medium-ship-1 { background-image: url(/ships/ship_medium.png); }
+  .selectorButton.big-ship-1 { background-image: url(/ships/ship_big.png); }
 
   .errorMessage {
     color: red;

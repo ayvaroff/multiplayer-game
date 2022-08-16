@@ -8,6 +8,9 @@ interface BoundingBox {
 }
 
 export class Render extends ECS.Component {
+  /**
+   * When default values are used it means that all calculations will happen inside Camera system
+   */
   constructor(
     public bbox: BoundingBox,
     public viewportPosX: number = 0,

@@ -1,14 +1,17 @@
 package finalmp
 
-import cats.effect.{ExitCode, IO, IOApp}
+import finalmp.AppConfig
 import finalmp.http.HttpServer
 import finalmp.controllers.PlayerController
+import cats.effect.{ExitCode, IO, IOApp}
 
 object Main extends IOApp {
-  def run(args: List[String]): IO[ExitCode] = {
-    val playerController = new PlayerController()
-    val httpServer = new HttpServer[IO](playerController)
-
-    httpServer.start().as(ExitCode.Success)
-  }
+  def run(args: List[String]): IO[ExitCode] =
+    for {
+      _ <- IO(println("Starting server..."))
+      config <- AppConfig.load[IO]
+      playerController = new PlayerController(config.playerTypes, config.game)
+      httpServer = new HttpServer[IO](config.http.server, playerController)
+      _ <- httpServer.start()
+    } yield ExitCode.Success
 }

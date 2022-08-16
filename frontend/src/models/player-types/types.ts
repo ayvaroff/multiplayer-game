@@ -23,12 +23,14 @@ export interface PlayerTypeDescription {
     accelerationSpeed: number;
     rotationSpeed: number;
     breakFriction: number;
-    weapons: PlayerWeaponDescription[];
+    // weapon name -> weapon description
+    weapons: Record<string, PlayerWeaponDescription>;
   };
 }
 
 export interface PlayerWeaponDescription {
   assetId: "cannon-small" | "cannon-medium";
+  name: string;
   size: {
     width: number;
     height: number;

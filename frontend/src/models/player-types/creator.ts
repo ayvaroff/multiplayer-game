@@ -1,17 +1,17 @@
 import { PlayerType } from "config";
 
-import { createPlayerTypeOneDescription } from "./type_1";
-import { createPlayerTypeTwoDescription } from "./type_2";
-import { createPlayerTypeThreeDescription } from "./type_3";
+import { createBigShip1Description } from "./big-ship-1";
+import { createMediumShip1Description } from "./medium-ship-1";
+import { createSmallShip1Description } from "./small-ship-1";
 import type { PlayerTypeDescription } from "./types";
 
 export const createPlayerTypeData = (playerType: PlayerType): PlayerTypeDescription => {
   switch (playerType) {
-    case PlayerType.TypeOne:
-      return createPlayerTypeOneDescription();
-    case PlayerType.TypeTwo:
-      return createPlayerTypeTwoDescription();
-    case PlayerType.TypeThree:
-      return createPlayerTypeThreeDescription();
+    case PlayerType.SmallShip1:
+      return createSmallShip1Description();
+    case PlayerType.MediumShip1:
+      return createMediumShip1Description();
+    case PlayerType.BigShip1:
+      return createBigShip1Description();
   }
 };
