@@ -9,6 +9,7 @@ final case class PlayerTypeId(value: String) extends AnyVal
 final case class Player(
   id: PlayerId,
   name: PlayerName,
+  playerTypeId: PlayerTypeId,
   position: Position,
   health: Int,
   shields: Int,
@@ -16,11 +17,12 @@ final case class Player(
   weapons: Map[PlayerWeaponId, PlayerWeapon],
 )
 
-// predefined weapon id based on PlayerId + player.type
 final case class PlayerWeaponId(value: String) extends AnyVal
+final case class PlayerWeaponName(value: String) extends AnyVal
 
 final case class PlayerWeapon(
   id: PlayerWeaponId,
+  name: PlayerWeaponName,
   position: Position,
   health: Int, // probably won't be implemented in scope of this project
 )

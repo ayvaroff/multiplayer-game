@@ -1,5 +1,6 @@
 package finalmp.controllers
 
+import finalmp.math.MathUtils
 import finalmp.models.game._
 import finalmp.models.game.configs.{PlayerTypesConfig, GameConfig}
 import scala.util.Random
@@ -12,31 +13,39 @@ final case class PlayerController(
   // it is not required to store player data in the controller in scope of this project
   var players = Map[PlayerId, Player]()
 
-  def createPlayer(playerTypeId: String): Option[Player] =
+  def createPlayer(playerTypeId: PlayerTypeId): Option[Player] =
     for {
-      playerTypeData <- playerConfig.get(playerTypeId)
+      playerTypeData <- playerConfig.get(playerTypeId.value)
       playerId = Utils.createRandomId()
       playerPosition = Utils.createRandomPosition(gameConfig)
-      playerWeapon = PlayerWeapon(
-        id = PlayerWeaponId(s"${playerId}_weapon_1"),
-        position = Position(5.0, 3, 60),
-        health = 100,
-      )
-      collider = List(
-        Point((0.0, 0.0)),
-        Point((10.0, 10.0)),
-      )
     } yield new Player(
       id = PlayerId(playerId),
       name = PlayerName(s"Player_$playerId"),
-      // randomize player position data
-      // TODO: get values according to game world state
+      playerTypeId = playerTypeId,
       position = playerPosition,
-      health = 100,
-      shields = 100,
-      collider = NonEmptyList(collider.head, collider.tail),
-      weapons = Map(
-        playerWeapon.id -> playerWeapon
-      )
+      health = playerTypeData.maxHealth,
+      shields = playerTypeData.maxShield,
+      collider = NonEmptyList(playerTypeData.collider.head, playerTypeData.collider.tail),
+      weapons = createPlayerWeaponsInformation(playerTypeData, playerPosition)
     )
+
+    private def createPlayerWeaponsInformation(
+      playerTypeData: PlayerTypesConfig.PlayerType,
+      playerPosition: Position,
+    ): Map[PlayerWeaponId, PlayerWeapon] = playerTypeData.weapons.map({
+      case (weaponName, weaponTypeData) => {
+        val playerWeaponId = PlayerWeaponId(Utils.createRandomId())
+        val weaponPositionPoint = MathUtils.rotateRelativePoint(
+          Point(weaponTypeData.offset.x, weaponTypeData.offset.y),
+          playerPosition.rotation,
+        )
+
+        playerWeaponId -> PlayerWeapon(
+          id = playerWeaponId,
+          name = PlayerWeaponName(weaponName),
+          position = Position(weaponPositionPoint.point._1, weaponPositionPoint.point._2, playerPosition.rotation),
+          health = weaponTypeData.health,
+        )
+      }
+    })
 }
