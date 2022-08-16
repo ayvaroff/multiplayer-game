@@ -1,6 +1,6 @@
 import type { PlayerTypeDescription } from "./types";
 
-export const createPlayerTypeOneDescription = (): PlayerTypeDescription => ({
+export const createSmallShip1Description = (): PlayerTypeDescription => ({
   assetId: "ship-small",
   size: {
     width: 32,
@@ -33,9 +33,10 @@ export const createPlayerTypeOneDescription = (): PlayerTypeDescription => ({
     accelerationSpeed: 0.7,
     rotationSpeed: 5,
     breakFriction: 0.5,
-    weapons: [
-      {
+    weapons: {
+      weapon_1: {
         assetId: "cannon-small",
+        name: "weapon_1",
         size: {
           width: 32,
           height: 32,
@@ -53,6 +54,6 @@ export const createPlayerTypeOneDescription = (): PlayerTypeDescription => ({
           y: 0,
         },
       },
-    ],
+    },
   },
 });

@@ -31,16 +31,16 @@ export const createShipEntity = (serverPlayerInfo: ServerPlayerInfo, playerData:
     new GameComponents.PlayerData(
       serverPlayerInfo.id,
       serverPlayerInfo.name,
-      serverPlayerInfo.playerType,
+      serverPlayerInfo.playerTypeId,
       serverPlayerInfo.health,
-      serverPlayerInfo.maxHealth,
+      playerData.properties.maxHealth,
       serverPlayerInfo.shields,
-      serverPlayerInfo.maxShields,
-      serverPlayerInfo.speed,
-      serverPlayerInfo.maxSpeed,
-      serverPlayerInfo.accelerationSpeed,
-      serverPlayerInfo.rotationSpeed,
-      serverPlayerInfo.breakFriction,
+      playerData.properties.maxShields,
+      0,
+      playerData.properties.maxSpeed,
+      playerData.properties.accelerationSpeed,
+      playerData.properties.rotationSpeed,
+      playerData.properties.breakFriction,
     ),
   );
 
@@ -54,18 +54,21 @@ export const createShipWeaponsEntities = (
 ): ECS.Entity[] => {
   const weaponEntities: ECS.Entity[] = [];
 
-  for (const weaponData of playerData.properties.weapons) {
+  for (const serverWeaponData of Object.values(serverPlayerInfo.weapons)) {
     const weaponEntity = new ECS.Entity();
+
+    // should always be here if configs are correct
+    // no need to check for "undefined"
+    const weaponData = playerData.properties.weapons[serverWeaponData.name];
 
     weaponEntity.addComponent(
       new GameComponents.Position(
-        serverPlayerInfo.position.x + weaponData.offset.x,
-        serverPlayerInfo.position.y + weaponData.offset.y,
-        serverPlayerInfo.position.rotation,
+        serverWeaponData.position.x,
+        serverWeaponData.position.y,
+        serverWeaponData.position.rotation,
       ),
     );
-    // TODO: implement weapon id set
-    weaponEntity.addComponent(new GameComponents.ServerSyncInfo("random_id"));
+    weaponEntity.addComponent(new GameComponents.ServerSyncInfo(serverWeaponData.id));
     weaponEntity.addComponent(
       new GameComponents.Sprite(
         AssetManager.instance.getAsset(weaponData.assetId).asset,

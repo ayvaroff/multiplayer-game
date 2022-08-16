@@ -7,9 +7,9 @@ export const config = {
 
 // TODO: better naming
 export enum PlayerType {
-  TypeOne = "TypeOne",
-  TypeTwo = "TypeTwo",
-  TypeThree = "TypeThree",
+  SmallShip1 = "small-ship-1",
+  MediumShip1 = "medium-ship-1",
+  BigShip1 = "big-ship-1",
 }
 
 export interface Asset {
@@ -36,12 +36,12 @@ export interface PlayerInfo {
   // general information
   id: string;
   name: string;
-  playerType: PlayerType;
+  playerTypeId: PlayerType;
   // per player type information
-  health: string;
-  maxHealth: string;
-  shields: string;
-  maxShields: string;
+  health: number;
+  maxHealth: number;
+  shields: number;
+  maxShields: number;
   speed: number;
   maxSpeed: number;
   accelerationSpeed: number;
@@ -49,8 +49,13 @@ export interface PlayerInfo {
   breakFriction: number;
 }
 
-export interface ServerPlayerInfo extends PlayerInfo {
-  weapons: PlayerInfoWeapon[];
+export interface ServerPlayerInfo {
+  id: string;
+  name: string;
+  playerTypeId: PlayerType;
+  health: number;
+  shields: number;
+  weapons: Record<string, PlayerInfoWeapon>;
   position: {
     x: number;
     y: number;
@@ -60,4 +65,11 @@ export interface ServerPlayerInfo extends PlayerInfo {
 
 interface PlayerInfoWeapon {
   id: string;
+  name: string;
+  health: number;
+  position: {
+    x: number;
+    y: number;
+    rotation: number;
+  };
 }

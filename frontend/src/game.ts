@@ -26,7 +26,7 @@ export class MPGame {
     const { container, renderWidth, renderHeight, serverPlayerInfo } = options;
 
     // TODO: pass game id
-    // await Core.WebSocketManger.instance.init("");
+    await Core.WebSocketManger.instance.init("");
 
     // init canvas
     Core.CanvasManger.instance.init(container, renderWidth, renderHeight);
@@ -57,7 +57,7 @@ export class MPGame {
 
   private initGameSystems(options: InitOptions) {
     // WS message handler
-    // this.world.registerSystem(new GameSystem.ServerSync());
+    this.world.registerSystem(new GameSystem.ServerSync());
     // key + mouse inputs
     this.world.registerSystem(new GameSystem.PlayerController());
     // relative entities position calculation

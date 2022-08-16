@@ -20,9 +20,15 @@ if (appContainer) {
     // ugly nested Promises
     fetch(playerConnectURL, {
       method: "POST",
-      body: JSON.stringify({ playerType: selectedType }),
+      body: JSON.stringify({ player_type_id: selectedType }),
     })
-      .then(res => res.json() as Promise<ServerPlayerInfo>)
+      .then(res => {
+        if (res.status === 200) {
+          return res.json() as Promise<ServerPlayerInfo>;
+        } else {
+          throw new Error(res.statusText);
+        }
+      })
       .then(serverPlayerInfo => {
         gameInstance
           .init({

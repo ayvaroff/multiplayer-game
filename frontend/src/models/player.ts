@@ -8,7 +8,7 @@ import { createPlayerTypeData } from "./player-types/creator";
 import { createShipEntity, createShipWeaponsEntities } from "./ship";
 
 export const createPlayer = (serverPlayerInfo: ServerPlayerInfo): ECS.Entity[] => {
-  const playerData = createPlayerTypeData(serverPlayerInfo.playerType);
+  const playerData = createPlayerTypeData(serverPlayerInfo.playerTypeId);
 
   const playerShipEntity = createShipEntity(serverPlayerInfo, playerData);
   // player specific components

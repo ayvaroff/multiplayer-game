@@ -43,7 +43,7 @@ final case class PlayerController(
         playerWeaponId -> PlayerWeapon(
           id = playerWeaponId,
           name = PlayerWeaponName(weaponName),
-          position = Position(weaponPositionPoint.point._1, weaponPositionPoint.point._2, playerPosition.rotation),
+          position = Position(weaponPositionPoint.point._1 + playerPosition.x, weaponPositionPoint.point._2 + playerPosition.y, playerPosition.rotation),
           health = weaponTypeData.health,
         )
       }
