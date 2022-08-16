@@ -48,7 +48,7 @@ export class Render extends ECS.System {
     this.ctx.save();
 
     this.ctx.translate(renderComponent.viewportPosX, renderComponent.viewportPosY);
-    this.ctx.rotate(MathUtils.toRad(entity.getComponent(GameComponents.Position).rotation));
+    this.ctx.rotate(entity.getComponent(GameComponents.Position).rotation);
     this.ctx.translate(-renderComponent.viewportPosX, -renderComponent.viewportPosY);
 
     this.ctx.drawImage(

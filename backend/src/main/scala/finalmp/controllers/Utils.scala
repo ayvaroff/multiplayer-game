@@ -4,6 +4,7 @@ import finalmp.models.game._
 import finalmp.models.game.configs.GameConfig
 import java.util.UUID
 import scala.util.Random
+import scala.math.Pi
 
 object Utils {
   def createRandomId(): String = UUID.randomUUID().toString
@@ -14,7 +15,7 @@ object Utils {
       (config.worldSize.max - config.safeAreaMargin).toDouble,
     )
 
-  def createRandomRotation(): Int = Random.nextInt(360)
+  def createRandomRotation(): Double = Random.between(0.0, 2.0 * Pi) // random rotation value in radians
 
   def createRandomPosition(config: GameConfig): Position =
     Position(createRandomCoordinate(config), createRandomCoordinate(config), createRandomRotation())

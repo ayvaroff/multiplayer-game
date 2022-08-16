@@ -83,13 +83,13 @@ export class PlayerController extends ECS.System {
     // TODO: change to rotation speed
     // rotate left
     if (this.moveTo.left) {
-      entity.getComponent(GameComponents.Position).rotation -= 1 * playerData.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation -= 0.03 * playerData.rotationSpeed;
     }
 
     // TODO: change to rotation speed
     // rotate right
     if (this.moveTo.right) {
-      entity.getComponent(GameComponents.Position).rotation += 1 * playerData.rotationSpeed;
+      entity.getComponent(GameComponents.Position).rotation += 0.03 * playerData.rotationSpeed;
     }
 
     // increase speed
@@ -109,20 +109,19 @@ export class PlayerController extends ECS.System {
 
     // update entity object coordinates
     entity.getComponent(GameComponents.Position).x +=
-      playerData.speed * MathUtils.sinDegree(entity.getComponent(GameComponents.Position).rotation);
+      playerData.speed * MathUtils.sinRad(entity.getComponent(GameComponents.Position).rotation);
     entity.getComponent(GameComponents.Position).y -=
-      playerData.speed * MathUtils.cosDegree(entity.getComponent(GameComponents.Position).rotation);
+      playerData.speed * MathUtils.cosRad(entity.getComponent(GameComponents.Position).rotation);
   }
 
   private processRotation(entity: ECS.Entity) {
     entity.getComponent(GameComponents.Position).rotation =
-      MathUtils.toDegree(
-        Math.atan2(
-          // since rendering is happening relative to viewport
-          // we need to calculate rotation from "GameComponents.Render"
-          this.mousePosition.y - entity.getComponent(GameComponents.Render).viewportPosY,
-          this.mousePosition.x - entity.getComponent(GameComponents.Render).viewportPosX,
-        ),
-      ) + 90; // a necessary 90' correction 🤷🏽‍♂️
+      Math.atan2(
+        // since rendering is happening relative to viewport
+        // we need to calculate rotation from "GameComponents.Render"
+        this.mousePosition.y - entity.getComponent(GameComponents.Render).viewportPosY,
+        this.mousePosition.x - entity.getComponent(GameComponents.Render).viewportPosX,
+      ) +
+      Math.PI / 2; // a necessary 90' correction 🤷🏽‍♂️
   }
 }

@@ -4,13 +4,13 @@ const toDegree = (rad: number): number => (rad * 180) / Math.PI;
 
 const toRad = (degree: number): number => (degree * Math.PI) / 180;
 
-const cosDegree = (degree: number): number => Math.cos(toRad(degree));
+const cosRad = (rad: number): number => Math.cos(rad);
 
-const sinDegree = (degree: number): number => Math.sin(toRad(degree));
+const sinRad = (rad: number): number => Math.sin(rad);
 
-const rotateRelativePoint = ([x, y]: Point, degree: number): Point => {
-  const cosValue = cosDegree(degree);
-  const sinValue = sinDegree(degree);
+const rotateRelativePoint = ([x, y]: Point, rad: number): Point => {
+  const cosValue = cosRad(rad);
+  const sinValue = sinRad(rad);
 
   // because coordinates are relative to the center [positionComponent.x, positionComponent.y]
   // there is no need to use the full formula like here
@@ -18,9 +18,9 @@ const rotateRelativePoint = ([x, y]: Point, degree: number): Point => {
   return [cosValue * x - sinValue * y, sinValue * x + cosValue * y];
 };
 
-const rotatePoint = ([x, y]: Point, [centerX, centerY]: Point, degree: number): Point => {
-  const sinValue = cosDegree(degree);
-  const cosValue = sinDegree(degree);
+const rotatePoint = ([x, y]: Point, [centerX, centerY]: Point, rad: number): Point => {
+  const cosValue = cosRad(rad);
+  const sinValue = sinRad(rad);
 
   return [
     cosValue * (x - centerX) - sinValue * (y - centerY) + centerX,
@@ -31,8 +31,8 @@ const rotatePoint = ([x, y]: Point, [centerX, centerY]: Point, degree: number): 
 export const MathUtils = {
   toDegree: toDegree,
   toRad: toRad,
-  cosDegree: cosDegree,
-  sinDegree: sinDegree,
+  cosRad: cosRad,
+  sinRad: sinRad,
   rotateRelativePoint: rotateRelativePoint,
   rotatePoint: rotatePoint,
 };
