@@ -8,7 +8,7 @@ interface CommonMessage<T extends string, P> {
 export type ServerMessages =
   | CommonMessage<"world.update", {}>
   | CommonMessage<"player.connected", ServerPlayerInfo>
-  | CommonMessage<"player.disconnected", { id: string /* player id */ }>;
+  | CommonMessage<"player.disconnected", PlayerDisconnectPayload>;
 
 // ---------------------
 
@@ -36,7 +36,11 @@ interface PlayerUpdatePayload {
   >;
 }
 
+export interface PlayerDisconnectPayload {
+  id: string; // player id
+}
+
 export type ClientMessages =
   | CommonMessage<"player.update", PlayerUpdatePayload>
   | CommonMessage<"player.connect", ServerPlayerInfo>
-  | CommonMessage<"player.disconnect", { id: string /* player id */ }>;
+  | CommonMessage<"player.disconnect", PlayerDisconnectPayload>;

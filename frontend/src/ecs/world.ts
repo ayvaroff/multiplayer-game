@@ -24,6 +24,10 @@ export class World {
     this.entitiesToRemove.push(entity);
   }
 
+  public removeEntities(entities: Entity[]): void {
+    this.entitiesToRemove.push(...entities);
+  }
+
   public registerSystem(system: System): void {
     if (!system.requiredComponents.size) {
       // eslint-disable-next-line no-console

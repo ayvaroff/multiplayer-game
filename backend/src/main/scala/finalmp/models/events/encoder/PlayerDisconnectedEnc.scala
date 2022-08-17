@@ -9,7 +9,9 @@ object PlayerDisconnectedEnc {
   implicit val playerDisconnectedEnc: Encoder[ServerEvent.PlayerDisconnected] = Encoder.instance { data =>
     Json.obj(
       "type" -> "player.disconnected".asJson,
-      "data" -> data.id.asJson,
+      "data" -> Json.obj(
+        "id" -> data.id.asJson
+      ),
     )
   }
 }
