@@ -1,5 +1,3 @@
-import { ServerMessages } from "messages";
-
 import * as ECS from "ecs";
 import * as GameComponents from "game-components";
 import { WebSocketManger } from "game-core";
@@ -7,21 +5,16 @@ import { WebSocketManger } from "game-core";
 export class ServerSync extends ECS.System {
   public requiredComponents: Set<Function> = new Set([GameComponents.Position, GameComponents.GameObject]);
 
-  private websocket: WebSocket = WebSocketManger.instance.getWS();
   private lastTick = 0;
-  private latestServerState: ServerMessages | null = null;
+  private latestServerState: {} | null = null;
 
   constructor() {
     super();
 
     // TODO: handle with subscription patter
-    // this.websocket.onmessage = message => {
-    //   const parsedWSMessage = JSON.parse(message.data) as ServerMessages;
-    //   // process only "world.update" message here
-    //   if (parsedWSMessage.type === "world.update") {
-    //     this.latestServerState = parsedWSMessage;
-    //   }
-    // };
+    WebSocketManger.instance.subscribe("world.update", data => {
+      this.latestServerState = data as {};
+    });
   }
 
   public update(entities: Set<ECS.Entity>, tick: number): void {
@@ -33,11 +26,6 @@ export class ServerSync extends ECS.System {
       return;
     }
     this.lastTick = tick;
-
-    // don't do anything if WS is closed or not connected yet
-    if (this.websocket.readyState !== WebSocket.OPEN) {
-      return;
-    }
 
     // TODO: send WS message about current local state
     // for (const entity of entities) {
@@ -57,9 +45,6 @@ export class ServerSync extends ECS.System {
     //   }
     // }
 
-    // TODO: process received WS messages and update positions
     // - state update
-    // - new player popup -> create new entity
-    // - player left -> destroy entity
   }
 }
