@@ -79,6 +79,9 @@ export const createShipWeaponsEntities = (
       ),
     );
     weaponEntity.addComponent(
+      new GameComponents.WeaponData(serverWeaponData.id, serverWeaponData.name, serverWeaponData.health),
+    );
+    weaponEntity.addComponent(
       new GameComponents.ParentController(parentEntityId, {
         x: weaponData.offset.x,
         y: weaponData.offset.y,

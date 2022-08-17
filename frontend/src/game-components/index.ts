@@ -7,3 +7,4 @@ export { Position } from "./position";
 export { Render } from "./render";
 export { ServerSyncInfo } from "./server-sync-info";
 export { Sprite } from "./sprite";
+export { WeaponData } from "./weapon-data";
