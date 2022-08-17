@@ -1,6 +1,7 @@
 export type { ServerPlayerInfo } from "config";
 
 import { ServerPlayerInfo } from "config";
+import { PlayerDisconnectPayload } from "messages";
 
 import * as ECS from "ecs";
 import * as Core from "game-core";
@@ -17,9 +18,14 @@ interface InitOptions {
 export class MPGame {
   private world: ECS.World;
 
+  // other players storage where key is playerId
+  private otherPlayer: Record<string, ECS.Entity[]>;
+
   constructor() {
     // create world
     this.world = new ECS.World();
+    // create players storage
+    this.otherPlayer = {};
   }
 
   public async init(options: InitOptions): Promise<void> {
@@ -121,12 +127,18 @@ export class MPGame {
         for (const entity of otherPlayerEntities) {
           this.world.addEntity(entity);
         }
+        // save into inner store
+        this.otherPlayer[newPlayerData.id] = otherPlayerEntities;
       }
     });
 
-    Core.WebSocketManger.instance.subscribe("player.disconnected", _data => {
-      // TODO: remove player from the world state
-      // this.world.removeEntity()
+    Core.WebSocketManger.instance.subscribe("player.disconnected", data => {
+      // TODO: fix it and use mapped types
+      const disconnectedInfo = data as PlayerDisconnectPayload;
+      // remove entities
+      this.world.removeEntities(this.otherPlayer[disconnectedInfo.id]);
+      // remove from inner store
+      delete this.otherPlayer[disconnectedInfo.id];
     });
   }
 }
