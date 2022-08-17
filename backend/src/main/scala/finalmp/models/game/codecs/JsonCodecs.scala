@@ -37,27 +37,41 @@ object JsonCodecs {
 
   implicit val encoderWorldEntity: Encoder[WorldEntity] = deriveEncoder[WorldEntity]
   implicit val decoderWorldEntity: Decoder[WorldEntity] = deriveDecoder[WorldEntity]
-  implicit val encoderWorldEntityId: Encoder[WorldEntityId] = deriveEncoder[WorldEntityId]
-  implicit val decoderWorldEntityId: Decoder[WorldEntityId] = deriveDecoder[WorldEntityId]
-  implicit val encoderWorldEntityType: Encoder[WorldEntityType] = deriveEncoder[WorldEntityType]
-  implicit val decoderWorldEntityType: Decoder[WorldEntityType] = deriveDecoder[WorldEntityType]
+  implicit val encoderWorldEntityId: Encoder[WorldEntityId] = deriveUnwrappedEncoder[WorldEntityId]
+  implicit val decoderWorldEntityId: Decoder[WorldEntityId] = deriveUnwrappedDecoder[WorldEntityId]
+  implicit val encoderWorldEntityType: Encoder[WorldEntityType] = deriveUnwrappedEncoder[WorldEntityType]
+  implicit val decoderWorldEntityType: Decoder[WorldEntityType] = deriveUnwrappedDecoder[WorldEntityType]
 
   implicit val encoderProjectile: Encoder[Projectile] = deriveEncoder[Projectile]
   implicit val decoderProjectile: Decoder[Projectile] = deriveDecoder[Projectile]
-  implicit val encoderProjectileId: Encoder[ProjectileId] = deriveEncoder[ProjectileId]
-  implicit val decoderProjectileId: Decoder[ProjectileId] = deriveDecoder[ProjectileId]
-  implicit val encoderProjectileType: Encoder[ProjectileType] = deriveEncoder[ProjectileType]
-  implicit val decoderProjectileType: Decoder[ProjectileType] = deriveDecoder[ProjectileType]
+  implicit val encoderProjectileId: Encoder[ProjectileId] = deriveUnwrappedEncoder[ProjectileId]
+  implicit val decoderProjectileId: Decoder[ProjectileId] = deriveUnwrappedDecoder[ProjectileId]
+  implicit val encoderProjectileType: Encoder[ProjectileType] = deriveUnwrappedEncoder[ProjectileType]
+  implicit val decoderProjectileType: Decoder[ProjectileType] = deriveUnwrappedDecoder[ProjectileType]
 
   implicit val encoderWorld: Encoder[World] = deriveEncoder[World]
   implicit val decoderWorld: Decoder[World] = deriveDecoder[World]
-  implicit val encoderWorldId: Encoder[WorldId] = deriveEncoder[WorldId]
-  implicit val decoderWorldId: Decoder[WorldId] = deriveDecoder[WorldId]
+  implicit val encoderWorldId: Encoder[WorldId] = deriveUnwrappedEncoder[WorldId]
+  implicit val decoderWorldId: Decoder[WorldId] = deriveUnwrappedDecoder[WorldId]
 
   implicit val playerIdKeyEncoder: KeyEncoder[PlayerId] = new KeyEncoder[PlayerId] {
     override def apply(playerId: PlayerId): String = playerId.value
   }
   implicit val playerIdKeyDecoder: KeyDecoder[PlayerId] = new KeyDecoder[PlayerId] {
     override def apply(key: String): Option[PlayerId] = Some(PlayerId(key))
+  }
+
+  implicit val projectileIdKeyEncoder: KeyEncoder[ProjectileId] = new KeyEncoder[ProjectileId] {
+    override def apply(projectileId: ProjectileId): String = projectileId.value
+  }
+  implicit val projectileIdKeyDecoder: KeyDecoder[ProjectileId] = new KeyDecoder[ProjectileId] {
+    override def apply(key: String): Option[ProjectileId] = Some(ProjectileId(key))
+  }
+
+  implicit val worldEntityIdKeyEncoder: KeyEncoder[WorldEntityId] = new KeyEncoder[WorldEntityId] {
+    override def apply(worldEntityId: WorldEntityId): String = worldEntityId.value
+  }
+  implicit val worldEntityIdKeyDecoder: KeyDecoder[WorldEntityId] = new KeyDecoder[WorldEntityId] {
+    override def apply(key: String): Option[WorldEntityId] = Some(WorldEntityId(key))
   }
 }

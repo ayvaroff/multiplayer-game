@@ -20,20 +20,7 @@ interface PlayerUpdatePayload {
     y: number;
     rotation: number;
   };
-  weapons: Record<
-    // weapon id
-    string,
-    {
-      // weapon id
-      id: string;
-      name: string;
-      position: {
-        x: number;
-        y: number;
-        rotation: number;
-      };
-    }
-  >;
+  weapons: ServerPlayerInfo["weapons"];
 }
 
 export interface PlayerDisconnectPayload {

@@ -1,6 +1,6 @@
 package finalmp.models.events
 
-import finalmp.models.game.{Player, PlayerId}
+import finalmp.models.game.{Player, PlayerId, World}
 
 sealed trait ServerEvent
 
@@ -9,5 +9,5 @@ object ServerEvent {
 
   case class PlayerDisconnected(id: PlayerId) extends ServerEvent
 
-  case class WorldUpdate(playerId: String) extends ServerEvent
+  case class WorldUpdate(world: World) extends ServerEvent
 }

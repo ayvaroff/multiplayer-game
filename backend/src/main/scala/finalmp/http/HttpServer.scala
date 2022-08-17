@@ -1,9 +1,10 @@
 package finalmp.http
 
-import finalmp.controllers.{PlayerController, LobbyController, TestClasses}
+import finalmp.controllers.{PlayerController, LobbyController, WorldController}
 import finalmp.http.services.{PlayerService, GameService, ApiService}
 import finalmp.http.HttpConfig.HttpServerConfig
 import finalmp.models.events.ServerEvent
+import finalmp.models.game.World
 import cats.effect._
 import cats.syntax.all._
 import cats.effect.concurrent.Ref
@@ -19,6 +20,7 @@ import scala.concurrent.ExecutionContext
 class HttpServer[F[_]: ConcurrentEffect: Timer](
   config: HttpServerConfig,
   playerController: PlayerController,
+  worldController: WorldController,
 ) {
 
   private def httpApp(
@@ -33,10 +35,10 @@ class HttpServer[F[_]: ConcurrentEffect: Timer](
   def start(): F[Unit] =
     for {
       gameQueue <- Queue.bounded[F, WebSocketFrame](1000)
-      initialGameStateRef <- Ref.of[F, TestClasses.GameState](TestClasses.GameState(TestClasses.PlayerMove("Start")))
-      initialGameState <- initialGameStateRef.get
-      gameTopic <- Topic[F, ServerEvent](initial = ServerEvent.WorldUpdate("test"))
-      lobbyController = new LobbyController[F](initialGameStateRef, gameQueue, gameTopic)
+      initialWorldRef <- Ref.of[F, World](worldController.world)
+      initialGameState <- initialWorldRef.get
+      gameTopic <- Topic[F, ServerEvent](initial = ServerEvent.WorldUpdate(initialGameState))
+      lobbyController = new LobbyController[F](initialWorldRef, gameQueue, gameTopic, worldController)
       tempo = BlazeServerBuilder[F](ExecutionContext.global)
         .bindHttp(config.port, config.host)
         .withHttpApp(CORS(httpApp(gameQueue, gameTopic), corsConfig).orNotFound)
