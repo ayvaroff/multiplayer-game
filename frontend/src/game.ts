@@ -1,7 +1,7 @@
 export type { ServerPlayerInfo } from "config";
 
 import { ServerPlayerInfo } from "config";
-import { PlayerDisconnectPayload } from "messages";
+import { PlayerDisconnectPayload, WorldMessageData } from "messages";
 
 import * as ECS from "ecs";
 import * as Core from "game-core";
@@ -140,6 +140,26 @@ export class MPGame {
         this.world.removeEntities(this.otherPlayer[disconnectedInfo.id]);
         // remove from inner store
         delete this.otherPlayer[disconnectedInfo.id];
+      }
+    });
+
+    // TODO: this is not the way it should work but fine for demonstration purposes
+    // This subscription is required if client connected "in the middle of the game"
+    Core.WebSocketManger.instance.subscribe("world.update", data => {
+      // TODO: fix it and use mapped types
+      const worldUpdateData = data as WorldMessageData;
+
+      for (const playerData of Object.values(worldUpdateData.players)) {
+        // filter out current player id because this message is broadcasted to every player
+        // if not current player => another player => add to the world
+        if (playerData.id !== serverPlayerInfo.id && !this.otherPlayer[playerData.id]) {
+          const otherPlayerEntities = createOtherPlayer(playerData);
+          for (const entity of otherPlayerEntities) {
+            this.world.addEntity(entity);
+          }
+          // save into inner store
+          this.otherPlayer[playerData.id] = otherPlayerEntities;
+        }
       }
     });
   }

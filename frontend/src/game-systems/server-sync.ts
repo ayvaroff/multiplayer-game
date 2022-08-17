@@ -19,6 +19,7 @@ export class ServerSync extends ECS.System {
     super();
 
     WebSocketManger.instance.subscribe("world.update", data => {
+      // TODO: fix it and use mapped types
       this.latestServerState = this.processWorldUpdateData(data as WorldMessageData);
     });
   }
