@@ -1,7 +1,6 @@
 export type { ServerPlayerInfo } from "config";
 
 import { ServerPlayerInfo } from "config";
-import { ServerMessages } from "messages";
 
 import * as ECS from "ecs";
 import * as Core from "game-core";
@@ -109,27 +108,25 @@ export class MPGame {
       });
     });
 
-    // subscribe to server messages
-    Core.WebSocketManger.instance.getWS().onmessage = message => {
-      const parsedWSMessage = JSON.parse(message.data) as ServerMessages;
-
-      switch (parsedWSMessage.type) {
-        case "player.connected": {
-          // filter out current player id because this message is broadcasted to every player
-          // if not current player => another player => add to the world
-          if (parsedWSMessage.data.id !== serverPlayerInfo.id) {
-            const otherPlayerEntities = createOtherPlayer(parsedWSMessage.data);
-            for (const entity of otherPlayerEntities) {
-              this.world.addEntity(entity);
-            }
-          }
-          break;
+    /**
+     * ----------- subscribe to server messages -----------
+     */
+    Core.WebSocketManger.instance.subscribe("player.connected", data => {
+      // TODO: fix it and use mapped types
+      const newPlayerData = data as ServerPlayerInfo;
+      // filter out current player id because this message is broadcasted to every player
+      // if not current player => another player => add to the world
+      if (newPlayerData.id !== serverPlayerInfo.id) {
+        const otherPlayerEntities = createOtherPlayer(newPlayerData);
+        for (const entity of otherPlayerEntities) {
+          this.world.addEntity(entity);
         }
-        case "player.disconnected":
-          // TODO: remove player from the world state
-          // this.world.removeEntity()
-          break;
       }
-    };
+    });
+
+    Core.WebSocketManger.instance.subscribe("player.disconnected", _data => {
+      // TODO: remove player from the world state
+      // this.world.removeEntity()
+    });
   }
 }
