@@ -12,7 +12,7 @@ export type ServerMessages =
 
 // ---------------------
 
-interface PlayerUpdatePayload {
+export interface PlayerUpdatePayload {
   // player id
   id: string;
   position: {

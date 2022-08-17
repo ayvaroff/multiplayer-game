@@ -54,7 +54,14 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
                 _ <- refWorld.set(worldController.addPlayer(player))
               } yield ()
             }
-            case Right(GameEvent.PlayerDisconnect(playerId)) => gameTopic.publish1(ServerEvent.PlayerDisconnected(playerId))
+            case Right(GameEvent.PlayerDisconnect(playerId)) => {
+              for {
+                // publish message to every player
+                _ <- gameTopic.publish1(ServerEvent.PlayerDisconnected(playerId))
+                // update game state
+                _ <- refWorld.set(worldController.removePlayer(playerId))
+              } yield ()
+            }
             case Right(GameEvent.PlayerUpdate(updatedPlayer)) => refWorld.set(worldController.updatePlayer(updatedPlayer))
             case _ => Sync[F].delay(println("something is wrong"))
           }

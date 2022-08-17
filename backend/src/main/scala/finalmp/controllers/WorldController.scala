@@ -33,5 +33,27 @@ final case class WorldController() {
     world
   }
 
-  def updatePlayer(playerUpdate: PlayerUpdateInfo): World = world //world.players + (playerUpdate.id -> world.players.get(playerUpdate.id))
+  def updatePlayer(playerUpdate: PlayerUpdateInfo): World =
+    world.players.get(playerUpdate.id) match {
+      case Some(player) => {
+        world = new World(
+          id = world.id,
+          createdAt = world.createdAt,
+          players = world.players + (playerUpdate.id -> Player(
+            id = player.id,
+            name = player.name,
+            playerTypeId = player.playerTypeId,
+            position = playerUpdate.position,
+            health = player.health,
+            shields = player.shields,
+            collider = player.collider,
+            weapons = playerUpdate.weapons,
+          )),
+          projectiles = world.projectiles,
+          entities = world.entities,
+        )
+        world
+      }
+      case None => world
+    }
 }

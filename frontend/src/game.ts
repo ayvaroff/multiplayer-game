@@ -19,13 +19,11 @@ export class MPGame {
   private world: ECS.World;
 
   // other players storage where key is playerId
-  private otherPlayer: Record<string, ECS.Entity[]>;
+  private otherPlayer: Record<string, ECS.Entity[]> = {};
 
   constructor() {
     // create world
     this.world = new ECS.World();
-    // create players storage
-    this.otherPlayer = {};
   }
 
   public async init(options: InitOptions): Promise<void> {
@@ -65,7 +63,7 @@ export class MPGame {
   }
 
   private initGameSystems(options: InitOptions) {
-    // WS message handler
+    // world sync handler
     this.world.registerSystem(new GameSystem.ServerSync());
     // key + mouse inputs
     this.world.registerSystem(new GameSystem.PlayerController());
@@ -76,6 +74,8 @@ export class MPGame {
     this.world.registerSystem(new GameSystem.Camera(cameraInitX, cameraInitY));
     // canvas render
     this.world.registerSystem(new GameSystem.Render());
+    // player sync after frame rendered
+    this.world.registerSystem(new GameSystem.PlayerSync());
   }
 
   private initPlayer(serverPlayerInfo: ServerPlayerInfo) {
@@ -136,9 +136,11 @@ export class MPGame {
       // TODO: fix it and use mapped types
       const disconnectedInfo = data as PlayerDisconnectPayload;
       // remove entities
-      this.world.removeEntities(this.otherPlayer[disconnectedInfo.id]);
-      // remove from inner store
-      delete this.otherPlayer[disconnectedInfo.id];
+      if (this.otherPlayer[disconnectedInfo.id]) {
+        this.world.removeEntities(this.otherPlayer[disconnectedInfo.id]);
+        // remove from inner store
+        delete this.otherPlayer[disconnectedInfo.id];
+      }
     });
   }
 }
