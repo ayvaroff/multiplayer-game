@@ -8,7 +8,7 @@ final case class WorldId(value: String) extends AnyVal
 final case class World(
   id: WorldId,
   createdAt: Instant,
-  players: Map[PlayerId, Player],
-  projectiles: List[Projectile],
-  entities: List[WorldEntity],
+  players: Map[PlayerId, Player] = Map(),
+  projectiles: Map[ProjectileId, Projectile] = Map(),
+  entities: Map[WorldEntityId, WorldEntity] = Map(),
 )

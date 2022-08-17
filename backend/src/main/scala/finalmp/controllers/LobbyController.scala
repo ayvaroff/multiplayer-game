@@ -1,6 +1,7 @@
 package finalmp.controllers
 
 import finalmp.models._
+import finalmp.models.game.World
 import finalmp.models.events.decoder.GameEventDec._
 import finalmp.models.events.GameEvent
 import finalmp.models.events.ServerEvent
@@ -15,18 +16,11 @@ import scala.concurrent.duration.FiniteDuration
 import java.util.concurrent.TimeUnit
 import io.circe.parser._
 
-object TestClasses {
-  sealed trait GameEvent
-  final case object GameTick extends GameEvent
-  final case class PlayerMove(input: String) extends GameEvent
-
-  final case class GameState(lastMove: PlayerMove)
-}
-
 final case class LobbyController[F[_]: ConcurrentEffect: Timer](
-  refGameState: Ref[F, TestClasses.GameState],
+  refWorld: Ref[F, World],
   gameQueue: Queue[F, WebSocketFrame],
   gameTopic: Topic[F, ServerEvent],
+  worldController: WorldController,
 ) {
   def lobbyStreams(): Stream[F, Unit] = {
     tickStream.merge(playerWorldStream)
@@ -34,9 +28,14 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
 
   private val tickStream: Stream[F, Unit] =
     Stream
+      // .awakeEvery[F](FiniteDuration(50, TimeUnit.MILLISECONDS))
       .awakeEvery[F](FiniteDuration(10, TimeUnit.SECONDS))
       // TODO: make it simple?
-      .evalMap(_ => Sync[F].delay(ServerEvent.WorldUpdate(refGameState.get.toString)))
+      .evalMap(_ => {
+        for {
+          world <- refWorld.get
+        } yield ServerEvent.WorldUpdate(world)
+      })
       .through(gameTopic.publish)
 
   private val playerWorldStream: Stream[F, Unit] =
@@ -52,14 +51,14 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
                 // publish message to every player
                 _ <- gameTopic.publish1(ServerEvent.PlayerConnected(player))
                 // update game state
-                _ <- refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
+                _ <- refWorld.set(worldController.addPlayer(player))
               } yield ()
             }
             case Right(GameEvent.PlayerDisconnect(playerId)) => gameTopic.publish1(ServerEvent.PlayerDisconnected(playerId))
-            case Right(GameEvent.PlayerUpdate(_)) => refGameState.set(TestClasses.GameState(TestClasses.PlayerMove(message.trim)))
+            case Right(GameEvent.PlayerUpdate(updatedPlayer)) => refWorld.set(worldController.updatePlayer(updatedPlayer))
             case _ => Sync[F].delay(println("something is wrong"))
           }
         }
-        case _ => refGameState.set(TestClasses.GameState(TestClasses.PlayerMove("unknown")))
+        case _ => Sync[F].delay(println("unknown"))
       }
 }
