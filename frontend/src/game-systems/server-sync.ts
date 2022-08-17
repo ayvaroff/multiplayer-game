@@ -54,6 +54,9 @@ export class ServerSync extends ECS.System {
           }
         }
       }
+
+      // TODO: check for timestamp?
+      this.latestServerState = null;
     }
   }
 
