@@ -55,7 +55,7 @@ export interface ServerPlayerInfo {
   playerTypeId: PlayerType;
   health: number;
   shields: number;
-  weapons: Record<string, PlayerInfoWeapon>;
+  weapons: Record<string, PlayerWeaponInfo>;
   position: {
     x: number;
     y: number;
@@ -63,7 +63,7 @@ export interface ServerPlayerInfo {
   };
 }
 
-interface PlayerInfoWeapon {
+export interface PlayerWeaponInfo {
   id: string;
   name: string;
   health: number;

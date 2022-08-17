@@ -11,7 +11,6 @@ export const createOtherPlayer = (serverPlayerInfo: ServerPlayerInfo): ECS.Entit
 
   const playerShipEntity = createShipEntity(serverPlayerInfo, playerData);
   //  other player specific components
-  playerShipEntity.addComponent(new GameComponents.GameObject("enemy"));
   playerShipEntity.addComponent(new GameComponents.Render(playerData.bbox));
 
   const weaponEntities = createShipWeaponsEntities(serverPlayerInfo, playerData, playerShipEntity.id);

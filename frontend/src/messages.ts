@@ -5,8 +5,16 @@ interface CommonMessage<T extends string, P> {
   data: P;
 }
 
+export interface WorldMessageData {
+  id: string;
+  createdAt: string; // ISO date
+  players: Record<string, ServerPlayerInfo>;
+  projectiles: Record<string, unknown>; // TODO: to be implemented
+  entities: Record<string, unknown>; // TODO: to be implemented
+}
+
 export type ServerMessages =
-  | CommonMessage<"world.update", {}>
+  | CommonMessage<"world.update", WorldMessageData>
   | CommonMessage<"player.connected", ServerPlayerInfo>
   | CommonMessage<"player.disconnected", PlayerDisconnectPayload>;
 

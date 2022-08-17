@@ -1,6 +1,6 @@
 import * as ECS from "ecs";
 
-type GameObjectType = "player" | "enemy" | "projectile" | "asteroid";
+type GameObjectType = "ship" | "weapon" | "projectile" | "asteroid";
 
 export class GameObject extends ECS.Component {
   constructor(public gameObject: GameObjectType) {
