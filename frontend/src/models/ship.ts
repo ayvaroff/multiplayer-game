@@ -43,6 +43,7 @@ export const createShipEntity = (serverPlayerInfo: ServerPlayerInfo, playerData:
       playerData.properties.breakFriction,
     ),
   );
+  shipEntity.addComponent(new GameComponents.GameObject("ship"));
 
   return shipEntity;
 };
@@ -88,6 +89,7 @@ export const createShipWeaponsEntities = (
       }),
     );
     weaponEntity.addComponent(new GameComponents.Render(weaponData.bbox));
+    weaponEntity.addComponent(new GameComponents.GameObject("weapon"));
 
     weaponEntities.push(weaponEntity);
   }

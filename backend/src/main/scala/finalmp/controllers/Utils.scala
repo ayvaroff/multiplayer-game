@@ -11,10 +11,8 @@ object Utils {
 
   def createRandomCoordinate(config: GameConfig): Double =
     Random.between(
-      -100.0,
-      100.0,
-      // (config.worldSize.min + config.safeAreaMargin).toDouble,
-      // (config.worldSize.max - config.safeAreaMargin).toDouble,
+      (config.worldSize.min + config.safeAreaMargin).toDouble,
+      (config.worldSize.max - config.safeAreaMargin).toDouble,
     )
 
   def createRandomRotation(): Double = Random.between(0.0, 2.0 * Pi) // random rotation value in radians

@@ -12,7 +12,6 @@ export const createPlayer = (serverPlayerInfo: ServerPlayerInfo): ECS.Entity[] =
 
   const playerShipEntity = createShipEntity(serverPlayerInfo, playerData);
   // player specific components
-  playerShipEntity.addComponent(new GameComponents.GameObject("player"));
   playerShipEntity.addComponent(new GameComponents.PlayerControls());
   playerShipEntity.addComponent(new GameComponents.KeyboardMovementControls());
   // init camera where player should be in the center of the viewport

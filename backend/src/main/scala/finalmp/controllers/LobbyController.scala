@@ -28,8 +28,8 @@ final case class LobbyController[F[_]: ConcurrentEffect: Timer](
 
   private val tickStream: Stream[F, Unit] =
     Stream
-      // .awakeEvery[F](FiniteDuration(50, TimeUnit.MILLISECONDS))
-      .awakeEvery[F](FiniteDuration(10, TimeUnit.SECONDS))
+      .awakeEvery[F](FiniteDuration(20, TimeUnit.MILLISECONDS))
+      // .awakeEvery[F](FiniteDuration(10, TimeUnit.SECONDS))
       // TODO: make it simple?
       .evalMap(_ => {
         for {
