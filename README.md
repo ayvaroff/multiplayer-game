@@ -2,6 +2,9 @@
 
 This project was developed as the final project for the [Evolution Scala Bootcamp](https://github.com/evolution-gaming/scala-bootcamp). It features both a TypeScript-based frontend game and a Scala backend server.
 
+> [!TIP]
+> You can find visual demo using the [following link](https://dms.licdn.com/playlist/vid/v2/C4D05AQFrUE7KDw_gQw/mp4-720p-30fp-crf28/mp4-720p-30fp-crf28/0/1664530861710?e=1751544000&v=beta&t=i-fFiYaBLgKZFuFHysGOHLqZVfAvuHlAjoDkf-szvH0) or open [the origin post in LinkedIn](https://www.linkedin.com/posts/ayvaroff_evolution-scala-bootcamp-activity-6981548442661580800-X2r2?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAf_aUQB61BblC_7w_IKNcWWqJsBg-lG4RQ)
+
 > [!WARNING]
 > The RESTful API is not secure and is intended for demonstration purposes only. Security features were not a focus of this project.
 
