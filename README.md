@@ -21,6 +21,26 @@ The backend is implemented in Scala using http4s, providing both a RESTful API a
 - RESTful API for game management (demo purposes)
 - No external game engines or libraries used
 
+### Running Locally
+
+To run the application locally, you need to have [Docker](https://docs.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) installed on your machine.
+
+To start all services (frontend and backend) in the background, run:
+
+```bash
+docker-compose up -d
+```
+
+This will build the images (if needed) and launch the containers in detached mode.
+
+To stop and remove all running containers, run:
+
+```bash
+docker-compose down
+```
+
+And open it on your web browser [localhost:3000](http://localhost:3000/)
+
 ---
 
 ## Tech Stack

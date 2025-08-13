@@ -1,8 +1,9 @@
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import type { Configuration } from "webpack";
 import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
-import HtmlWebpackPlugin from "html-webpack-plugin";
 
 type ConfigEnv = {
   prod?: boolean;
@@ -25,21 +26,26 @@ const createConfig = (env: ConfigEnv): Configuration => {
   // Use necessary webpack plugins
   const plugins: Configuration["plugins"] = [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: "./src/index.html",
       hash: true,
-  }),
+    }),
   ];
 
   if (env.prod) {
     plugins.push(
-      new CleanWebpackPlugin({
-        cleanStaleWebpackAssets: false,
-        cleanOnceBeforeBuildPatterns: [
-          outputFolder,
-          // make sure that TS will be processed in empty directory
-          path.resolve(__dirname, "lib"),
-        ],
-      }),
+      ...[
+        new CleanWebpackPlugin({
+          cleanStaleWebpackAssets: false,
+          cleanOnceBeforeBuildPatterns: [
+            outputFolder,
+            // make sure that TS will be processed in empty directory
+            path.resolve(__dirname, "lib"),
+          ],
+        }),
+        new CopyWebpackPlugin({
+          patterns: [{ from: "./assets", to: outputFolder }],
+        }),
+      ],
     );
   }
 
@@ -49,7 +55,7 @@ const createConfig = (env: ConfigEnv): Configuration => {
     output: {
       path: outputFolder,
       filename: "app.bundle.js",
-      chunkFilename: 'chunk_[chunkhash].js',
+      chunkFilename: "chunk_[chunkhash].js",
     },
     module: {
       rules: [

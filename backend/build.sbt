@@ -26,3 +26,5 @@ libraryDependencies ++= Seq(
   "com.github.pureconfig" %% "pureconfig-enumeratum" % pureConfigVersion,
   "com.github.pureconfig" %% "pureconfig-cats" % pureConfigVersion,
 )
+
+assembly / assemblyJarName := "multiplayer-backend.jar"
